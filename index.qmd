@@ -1,0 +1,15 @@
+---
+title: "IBM 6500 SQL Learning Portfolio"
+---
+
+**Student:** Georgia Monjarrez
+
+**Course:** IBM 6500 — Customer Insight Methods and Survey Research
+
+This portfolio brings together DataCamp course-completion evidence, SQL learning notes, and examples of how database queries can support marketing analysis and the Culminating Experience Project (CEP).
+
+## Reports
+
+- [Introduction to SQL](introduction-to-sql.html)
+- Introduction to BigQuery — to be completed
+- Intermediate SQL — to be completed
