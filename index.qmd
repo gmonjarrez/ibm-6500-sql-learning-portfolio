@@ -1,5 +1,5 @@
 ---
-title: "IBM 6500 SQL Learning Portfolio"
+title: "IBM 6500 SQL and BigQuery Learning Portfolio"
 ---
 
 **Student:** Georgia Monjarrez
@@ -11,5 +11,5 @@ This portfolio brings together DataCamp course-completion evidence, SQL learning
 ## Reports
 
 - [Introduction to SQL](introduction-to-sql.html)
-- Introduction to BigQuery — to be completed
+- [Introduction to BigQuery](introduction-to-bigquery.html)
 - Intermediate SQL — to be completed
