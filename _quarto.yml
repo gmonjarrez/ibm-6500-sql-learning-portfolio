@@ -5,6 +5,7 @@ project:
     - index.qmd
     - introduction-to-sql.qmd
     - introduction-to-bigquery.qmd
+    - intermediate-sql.qmd
 
 format:
   html:
