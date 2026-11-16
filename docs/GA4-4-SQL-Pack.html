@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Georgia Monjarrez" />
+  <title>Milestone 4 | GA4 SQL Pack</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Milestone 4 | GA4 SQL Pack</h1>
+<p class="subtitle">Eight GoogleSQL queries on GA4 event exports</p>
+<p class="author">Georgia Monjarrez</p>
+</header>
+<nav id="TOC" role="doc-toc">
+<h2 id="toc-title">Contents</h2>
+<ul>
+<li><a href="#data-and-scope" id="toc-data-and-scope">Data and
+scope</a></li>
+<li><a href="#inspect-recent-purchase-events"
+id="toc-inspect-recent-purchase-events">1. Inspect recent purchase
+events</a></li>
+<li><a href="#track-daily-page-views-and-visitors"
+id="toc-track-daily-page-views-and-visitors">2. Track daily page views
+and visitors</a></li>
+<li><a href="#compare-the-device-mix-for-purchase-activity"
+id="toc-compare-the-device-mix-for-purchase-activity">3. Compare the
+device mix for purchase activity</a></li>
+<li><a href="#identify-the-most-viewed-pages"
+id="toc-identify-the-most-viewed-pages">4. Identify the most-viewed
+pages</a></li>
+<li><a href="#compare-recorded-engagement-time-by-device"
+id="toc-compare-recorded-engagement-time-by-device">5. Compare recorded
+engagement time by device</a></li>
+<li><a href="#measure-product-browsing-depth-per-session"
+id="toc-measure-product-browsing-depth-per-session">6. Measure product
+browsing depth per session</a></li>
+<li><a href="#summarize-purchase-revenue-by-week"
+id="toc-summarize-purchase-revenue-by-week">7. Summarize purchase
+revenue by week</a></li>
+<li><a href="#build-an-ordered-session-purchase-funnel"
+id="toc-build-an-ordered-session-purchase-funnel">8. Build an ordered
+session purchase funnel</a></li>
+<li><a href="#appendix" id="toc-appendix">Appendix</a></li>
+</ul>
+</nav>
+<style>
+  body { max-width: 58rem; padding: 2.5rem 1.5rem; margin: auto; font: 17px/1.6 system-ui, sans-serif; color: #192a35; background: #fff; }
+  header { padding-bottom: 1rem; border-bottom: 3px solid #137368; }
+  h1, h2 { color: #174a48; line-height: 1.2; }
+  h2 { margin-top: 2.2rem; }
+  a { color: #12645c; }
+  pre { padding: 1rem; overflow-x: auto; background: #f1f6f5; border: 1px solid #d8e6e3; border-radius: .35rem; }
+  pre code { font-size: .88rem; }
+  table { border-collapse: collapse; width: 100%; }
+  td, th { text-align: left; padding: .55rem; border-bottom: 1px solid #d8e6e3; }
+</style>
+<h2 id="data-and-scope">Data and scope</h2>
+<p>I use Google’s public, obfuscated GA4 ecommerce export for December
+1–31, 2020. Each query runs independently in BigQuery using GoogleSQL.
+The constant <code>_TABLE_SUFFIX</code> range limits scanning to the
+December daily export tables. The event and session counts describe
+activity observed within this window.</p>
+<table>
+<thead>
+<tr>
+<th>Rubric requirement</th>
+<th>Queries that demonstrate it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Filtering and scoping</td>
+<td>1–8</td>
+</tr>
+<tr>
+<td>Grouping and aggregation</td>
+<td>2–7</td>
+</tr>
+<tr>
+<td>Typed parameter extraction with
+<code>UNNEST(event_params)</code></td>
+<td>4, 5, 6, 8</td>
+</tr>
+<tr>
+<td>CTEs</td>
+<td>4, 5, 6, 8</td>
+</tr>
+<tr>
+<td>Joining or combining</td>
+<td>8</td>
+</tr>
+</tbody>
+</table>
+<h2 id="inspect-recent-purchase-events">1. Inspect recent purchase
+events</h2>
+<pre class="sql"><code>SELECT
+  PARSE_DATE(&#39;%Y%m%d&#39;, event_date) AS property_date,
+  TIMESTAMP_MICROS(event_timestamp) AS event_timestamp_utc,
+  ecommerce.transaction_id AS transaction_id,
+  device.category AS device_category
+FROM `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*`
+WHERE _TABLE_SUFFIX BETWEEN &#39;20201201&#39; AND &#39;20201231&#39;
+  AND event_name = &#39;purchase&#39;
+ORDER BY event_timestamp DESC, transaction_id, device_category
+LIMIT 25;</code></pre>
+<p>This pulls up to 25 of the latest recorded purchase events in
+December so I can spot-check timestamps, transaction IDs, and devices
+before building a summary. Each row is a purchase event, and repeated
+transaction IDs can appear if a purchase was recorded more than once.
+The property date follows the GA4 property’s time zone, while the
+displayed timestamp is in UTC.</p>
+<h2 id="track-daily-page-views-and-visitors">2. Track daily page views
+and visitors</h2>
+<pre class="sql"><code>SELECT
+  PARSE_DATE(&#39;%Y%m%d&#39;, event_date) AS property_date,
+  COUNT(*) AS page_views,
+  COUNT(DISTINCT user_pseudo_id) AS observed_visitor_ids
+FROM `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*`
+WHERE _TABLE_SUFFIX BETWEEN &#39;20201201&#39; AND &#39;20201231&#39;
+  AND event_name = &#39;page_view&#39;
+GROUP BY property_date
+ORDER BY property_date;</code></pre>
+<p>This shows recorded page views and distinct pseudonymous IDs with a
+page view on each property date. I can use it to spot traffic spikes and
+see whether views and observed visitor IDs moved together. Missing IDs
+are excluded from the distinct count, and the same person can have
+multiple IDs across browsers or devices.</p>
+<h2 id="compare-the-device-mix-for-purchase-activity">3. Compare the
+device mix for purchase activity</h2>
+<pre class="sql"><code>SELECT
+  COALESCE(NULLIF(device.category, &#39;&#39;), &#39;(unknown)&#39;) AS device_category,
+  COUNTIF(event_name = &#39;page_view&#39;) AS page_views,
+  COUNTIF(event_name = &#39;purchase&#39;) AS purchase_events,
+  COUNT(DISTINCT IF(event_name = &#39;purchase&#39;, user_pseudo_id, NULL))
+    AS observed_buyer_ids
+FROM `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*`
+WHERE _TABLE_SUFFIX BETWEEN &#39;20201201&#39; AND &#39;20201231&#39;
+  AND event_name IN (&#39;page_view&#39;, &#39;purchase&#39;)
+GROUP BY device_category
+ORDER BY purchase_events DESC, device_category;</code></pre>
+<p>This compares how much browsing and purchase activity occurred in
+each device category. The buyer ID column shows how many distinct
+pseudonymous IDs recorded a purchase in that category, which helps
+distinguish many buyers from repeated purchase events. The table uses
+event counts, and calculating a device conversion rate would require
+choosing an eligible user or session denominator.</p>
+<h2 id="identify-the-most-viewed-pages">4. Identify the most-viewed
+pages</h2>
+<pre class="sql"><code>WITH page_views AS (
+  SELECT
+    (
+      SELECT MAX(p.value.string_value)
+      FROM UNNEST(event_params) AS p
+      WHERE p.key = &#39;page_location&#39;
+    ) AS page_url
+  FROM `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*`
+  WHERE _TABLE_SUFFIX BETWEEN &#39;20201201&#39; AND &#39;20201231&#39;
+    AND event_name = &#39;page_view&#39;
+),
+clean_pages AS (
+  SELECT REGEXP_REPLACE(page_url, r&#39;[?#].*$&#39;, &#39;&#39;) AS page
+  FROM page_views
+  WHERE NULLIF(page_url, &#39;&#39;) IS NOT NULL
+)
+SELECT page, COUNT(*) AS page_views
+FROM clean_pages
+WHERE page != &#39;&#39;
+GROUP BY page
+ORDER BY page_views DESC, page
+LIMIT 15;</code></pre>
+<p>This extracts the string-valued <code>page_location</code> from each
+page view and removes query strings and fragments before counting the
+top 15 URLs. The ranking helps prioritize high-traffic pages for
+navigation or usability reviews. Empty URLs are excluded, and pages that
+use URL parameters to show different content can be combined.</p>
+<h2 id="compare-recorded-engagement-time-by-device">5. Compare recorded
+engagement time by device</h2>
+<pre class="sql"><code>WITH event_engagement AS (
+  SELECT
+    COALESCE(NULLIF(device.category, &#39;&#39;), &#39;(unknown)&#39;) AS device_category,
+    (
+      SELECT MAX(p.value.int_value)
+      FROM UNNEST(event_params) AS p
+      WHERE p.key = &#39;engagement_time_msec&#39;
+    ) AS engagement_ms
+  FROM `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*`
+  WHERE _TABLE_SUFFIX BETWEEN &#39;20201201&#39; AND &#39;20201231&#39;
+)
+SELECT
+  device_category,
+  COUNT(engagement_ms) AS events_with_engagement_time,
+  ROUND(SUM(engagement_ms) / 1000.0, 2) AS total_engagement_seconds,
+  ROUND(AVG(engagement_ms) / 1000.0, 2) AS mean_seconds_per_reporting_event
+FROM event_engagement
+WHERE engagement_ms &gt;= 0
+GROUP BY device_category
+ORDER BY total_engagement_seconds DESC, device_category;</code></pre>
+<p>This reads the integer-valued <code>engagement_time_msec</code>
+parameter from events and summarizes the recorded time in seconds by
+device. Totals show where measured engagement accumulated, and the mean
+gives context about its spread across reporting events. The mean uses
+events with a nonnegative value as its denominator, so it should be read
+as seconds per reporting event.</p>
+<h2 id="measure-product-browsing-depth-per-session">6. Measure product
+browsing depth per session</h2>
+<pre class="sql"><code>WITH product_views AS (
+  SELECT
+    user_pseudo_id,
+    (
+      SELECT MAX(p.value.int_value)
+      FROM UNNEST(event_params) AS p
+      WHERE p.key = &#39;ga_session_id&#39;
+    ) AS session_id
+  FROM `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*`
+  WHERE _TABLE_SUFFIX BETWEEN &#39;20201201&#39; AND &#39;20201231&#39;
+    AND event_name = &#39;view_item&#39;
+),
+per_session AS (
+  SELECT user_pseudo_id, session_id, COUNT(*) AS product_view_events
+  FROM product_views
+  WHERE user_pseudo_id IS NOT NULL AND session_id IS NOT NULL
+  GROUP BY user_pseudo_id, session_id
+)
+SELECT product_view_events, COUNT(*) AS sessions
+FROM per_session
+GROUP BY product_view_events
+ORDER BY product_view_events;</code></pre>
+<p>This produces a frequency table showing how many sessions recorded
+one product view, two product views, and so on. I can use it to see how
+often product browsing extends beyond a single view. A session is
+identified by the pair of user ID and integer session ID, and repeated
+views of the same product count separately.</p>
+<h2 id="summarize-purchase-revenue-by-week">7. Summarize purchase
+revenue by week</h2>
+<pre class="sql"><code>SELECT
+  DATE_TRUNC(PARSE_DATE(&#39;%Y%m%d&#39;, event_date), WEEK(MONDAY)) AS week_start,
+  COUNT(*) AS purchase_events,
+  COUNT(DISTINCT NULLIF(ecommerce.transaction_id, &#39;&#39;))
+    AS distinct_transaction_ids,
+  COUNT(ecommerce.purchase_revenue_in_usd) AS events_with_usd_revenue,
+  ROUND(SUM(ecommerce.purchase_revenue_in_usd), 2) AS purchase_revenue_usd
+FROM `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*`
+WHERE _TABLE_SUFFIX BETWEEN &#39;20201201&#39; AND &#39;20201231&#39;
+  AND event_name = &#39;purchase&#39;
+GROUP BY week_start
+ORDER BY week_start;</code></pre>
+<p>This groups December purchase events into Monday-start weeks and
+reports recorded purchase revenue in USD alongside purchase-event and
+transaction-ID counts. This helps compare sales activity and check
+whether purchase counts, transaction IDs, or revenue coverage need
+further investigation. Revenue is summed at the event level before
+refunds, so repeated purchase events may inflate the total, and the
+first and last weeks cover only their December dates.</p>
+<h2 id="build-an-ordered-session-purchase-funnel">8. Build an ordered
+session purchase funnel</h2>
+<pre class="sql"><code>WITH funnel_events AS (
+  SELECT
+    user_pseudo_id,
+    (
+      SELECT MAX(p.value.int_value)
+      FROM UNNEST(event_params) AS p
+      WHERE p.key = &#39;ga_session_id&#39;
+    ) AS session_id,
+    event_name,
+    event_timestamp
+  FROM `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*`
+  WHERE _TABLE_SUFFIX BETWEEN &#39;20201201&#39; AND &#39;20201231&#39;
+    AND event_name IN (&#39;view_item&#39;, &#39;add_to_cart&#39;, &#39;purchase&#39;)
+    AND user_pseudo_id IS NOT NULL
+),
+first_views AS (
+  SELECT user_pseudo_id, session_id, MIN(event_timestamp) AS view_ts
+  FROM funnel_events
+  WHERE event_name = &#39;view_item&#39; AND session_id IS NOT NULL
+  GROUP BY user_pseudo_id, session_id
+),
+first_carts AS (
+  SELECT
+    v.user_pseudo_id,
+    v.session_id,
+    MIN(c.event_timestamp) AS cart_ts
+  FROM first_views AS v
+  LEFT JOIN funnel_events AS c
+    ON v.user_pseudo_id = c.user_pseudo_id
+    AND v.session_id = c.session_id
+    AND c.event_name = &#39;add_to_cart&#39;
+    AND c.event_timestamp &gt; v.view_ts
+  GROUP BY v.user_pseudo_id, v.session_id
+),
+session_steps AS (
+  SELECT
+    c.user_pseudo_id,
+    c.session_id,
+    c.cart_ts,
+    MIN(p.event_timestamp) AS purchase_ts
+  FROM first_carts AS c
+  LEFT JOIN funnel_events AS p
+    ON c.user_pseudo_id = p.user_pseudo_id
+    AND c.session_id = p.session_id
+    AND p.event_name = &#39;purchase&#39;
+    AND p.event_timestamp &gt; c.cart_ts
+  GROUP BY c.user_pseudo_id, c.session_id, c.cart_ts
+)
+SELECT
+  COUNT(*) AS sessions_with_view,
+  COUNTIF(cart_ts IS NOT NULL) AS sessions_with_cart_after_view,
+  COUNTIF(purchase_ts IS NOT NULL) AS sessions_with_purchase_after_cart,
+  ROUND(100 * SAFE_DIVIDE(COUNTIF(cart_ts IS NOT NULL), COUNT(*)), 2)
+    AS view_to_cart_pct,
+  ROUND(
+    100 * SAFE_DIVIDE(
+      COUNTIF(purchase_ts IS NOT NULL), COUNTIF(cart_ts IS NOT NULL)
+    ), 2
+  ) AS cart_to_purchase_pct
+FROM session_steps;</code></pre>
+<p>This follows December sessions from a product view to a later cart
+event and then to a later purchase, retaining sessions that drop out at
+each step. Each percentage uses the previous step as its denominator,
+which helps show where the largest drop-off occurred. The steps can
+involve different products within a session, and equal timestamps are
+excluded because the available ordering in this query requires strictly
+later events.</p>
+<h2 id="appendix">Appendix</h2>
+<ul>
+<li><a
+href="https://github.com/gmonjarrez/ibm-6500-sql-learning-portfolio">GitHub
+repository</a></li>
+<li><a
+href="https://gmonjarrez.github.io/ibm-6500-sql-learning-portfolio/GA4-4-SQL-Pack.html">GitHub
+Pages report</a></li>
+<li><a
+href="https://developers.google.com/analytics/bigquery/web-ecommerce-demo-dataset">Google’s
+GA4 ecommerce sample dataset</a></li>
+<li><a
+href="https://developers.google.com/analytics/bigquery/basic-queries">Google’s
+GA4 BigQuery query examples</a></li>
+</ul>
+</body>
+</html>
