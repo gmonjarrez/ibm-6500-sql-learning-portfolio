@@ -1,0 +1,266 @@
+---
+title: "Milestone 4 | GA4 SQL Pack"
+subtitle: "Eight GoogleSQL queries on GA4 event exports"
+author: "Georgia Monjarrez"
+format:
+  html:
+    toc: true
+    toc-title: "Contents"
+    embed-resources: true
+    code-copy: true
+---
+
+```{=html}
+<style>
+  body { max-width: 58rem; padding: 2.5rem 1.5rem; margin: auto; font: 17px/1.6 system-ui, sans-serif; color: #192a35; background: #fff; }
+  header { padding-bottom: 1rem; border-bottom: 3px solid #137368; }
+  h1, h2 { color: #174a48; line-height: 1.2; }
+  h2 { margin-top: 2.2rem; }
+  a { color: #12645c; }
+  pre { padding: 1rem; overflow-x: auto; background: #f1f6f5; border: 1px solid #d8e6e3; border-radius: .35rem; }
+  pre code { font-size: .88rem; }
+  table { border-collapse: collapse; width: 100%; }
+  td, th { text-align: left; padding: .55rem; border-bottom: 1px solid #d8e6e3; }
+</style>
+```
+
+## Data and scope
+
+I use Google's public, obfuscated GA4 ecommerce export for December 1–31, 2020. Each query runs independently in BigQuery using GoogleSQL. The constant `_TABLE_SUFFIX` range limits scanning to the December daily export tables. The event and session counts describe activity observed within this window.
+
+| Rubric requirement | Queries that demonstrate it |
+|---|---|
+| Filtering and scoping | 1–8 |
+| Grouping and aggregation | 2–7 |
+| Typed parameter extraction with `UNNEST(event_params)` | 4, 5, 6, 8 |
+| CTEs | 4, 5, 6, 8 |
+| Joining or combining | 8 |
+
+## 1. Inspect recent purchase events
+
+```sql
+SELECT
+  PARSE_DATE('%Y%m%d', event_date) AS property_date,
+  TIMESTAMP_MICROS(event_timestamp) AS event_timestamp_utc,
+  ecommerce.transaction_id AS transaction_id,
+  device.category AS device_category
+FROM `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*`
+WHERE _TABLE_SUFFIX BETWEEN '20201201' AND '20201231'
+  AND event_name = 'purchase'
+ORDER BY event_timestamp DESC, transaction_id, device_category
+LIMIT 25;
+```
+
+This pulls up to 25 of the latest recorded purchase events in December so I can spot-check timestamps, transaction IDs, and devices before building a summary. Each row is a purchase event, and repeated transaction IDs can appear if a purchase was recorded more than once. The property date follows the GA4 property's time zone, while the displayed timestamp is in UTC.
+
+## 2. Track daily page views and visitors
+
+```sql
+SELECT
+  PARSE_DATE('%Y%m%d', event_date) AS property_date,
+  COUNT(*) AS page_views,
+  COUNT(DISTINCT user_pseudo_id) AS observed_visitor_ids
+FROM `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*`
+WHERE _TABLE_SUFFIX BETWEEN '20201201' AND '20201231'
+  AND event_name = 'page_view'
+GROUP BY property_date
+ORDER BY property_date;
+```
+
+This shows recorded page views and distinct pseudonymous IDs with a page view on each property date. I can use it to spot traffic spikes and see whether views and observed visitor IDs moved together. Missing IDs are excluded from the distinct count, and the same person can have multiple IDs across browsers or devices.
+
+## 3. Compare the device mix for purchase activity
+
+```sql
+SELECT
+  COALESCE(NULLIF(device.category, ''), '(unknown)') AS device_category,
+  COUNTIF(event_name = 'page_view') AS page_views,
+  COUNTIF(event_name = 'purchase') AS purchase_events,
+  COUNT(DISTINCT IF(event_name = 'purchase', user_pseudo_id, NULL))
+    AS observed_buyer_ids
+FROM `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*`
+WHERE _TABLE_SUFFIX BETWEEN '20201201' AND '20201231'
+  AND event_name IN ('page_view', 'purchase')
+GROUP BY device_category
+ORDER BY purchase_events DESC, device_category;
+```
+
+This compares how much browsing and purchase activity occurred in each device category. The buyer ID column shows how many distinct pseudonymous IDs recorded a purchase in that category, which helps distinguish many buyers from repeated purchase events. The table uses event counts, and calculating a device conversion rate would require choosing an eligible user or session denominator.
+
+## 4. Identify the most-viewed pages
+
+```sql
+WITH page_views AS (
+  SELECT
+    (
+      SELECT MAX(p.value.string_value)
+      FROM UNNEST(event_params) AS p
+      WHERE p.key = 'page_location'
+    ) AS page_url
+  FROM `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*`
+  WHERE _TABLE_SUFFIX BETWEEN '20201201' AND '20201231'
+    AND event_name = 'page_view'
+),
+clean_pages AS (
+  SELECT REGEXP_REPLACE(page_url, r'[?#].*$', '') AS page
+  FROM page_views
+  WHERE NULLIF(page_url, '') IS NOT NULL
+)
+SELECT page, COUNT(*) AS page_views
+FROM clean_pages
+WHERE page != ''
+GROUP BY page
+ORDER BY page_views DESC, page
+LIMIT 15;
+```
+
+This extracts the string-valued `page_location` from each page view and removes query strings and fragments before counting the top 15 URLs. The ranking helps prioritize high-traffic pages for navigation or usability reviews. Empty URLs are excluded, and pages that use URL parameters to show different content can be combined.
+
+## 5. Compare recorded engagement time by device
+
+```sql
+WITH event_engagement AS (
+  SELECT
+    COALESCE(NULLIF(device.category, ''), '(unknown)') AS device_category,
+    (
+      SELECT MAX(p.value.int_value)
+      FROM UNNEST(event_params) AS p
+      WHERE p.key = 'engagement_time_msec'
+    ) AS engagement_ms
+  FROM `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*`
+  WHERE _TABLE_SUFFIX BETWEEN '20201201' AND '20201231'
+)
+SELECT
+  device_category,
+  COUNT(engagement_ms) AS events_with_engagement_time,
+  ROUND(SUM(engagement_ms) / 1000.0, 2) AS total_engagement_seconds,
+  ROUND(AVG(engagement_ms) / 1000.0, 2) AS mean_seconds_per_reporting_event
+FROM event_engagement
+WHERE engagement_ms >= 0
+GROUP BY device_category
+ORDER BY total_engagement_seconds DESC, device_category;
+```
+
+This reads the integer-valued `engagement_time_msec` parameter from events and summarizes the recorded time in seconds by device. Totals show where measured engagement accumulated, and the mean gives context about its spread across reporting events. The mean uses events with a nonnegative value as its denominator, so it should be read as seconds per reporting event.
+
+## 6. Measure product browsing depth per session
+
+```sql
+WITH product_views AS (
+  SELECT
+    user_pseudo_id,
+    (
+      SELECT MAX(p.value.int_value)
+      FROM UNNEST(event_params) AS p
+      WHERE p.key = 'ga_session_id'
+    ) AS session_id
+  FROM `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*`
+  WHERE _TABLE_SUFFIX BETWEEN '20201201' AND '20201231'
+    AND event_name = 'view_item'
+),
+per_session AS (
+  SELECT user_pseudo_id, session_id, COUNT(*) AS product_view_events
+  FROM product_views
+  WHERE user_pseudo_id IS NOT NULL AND session_id IS NOT NULL
+  GROUP BY user_pseudo_id, session_id
+)
+SELECT product_view_events, COUNT(*) AS sessions
+FROM per_session
+GROUP BY product_view_events
+ORDER BY product_view_events;
+```
+
+This produces a frequency table showing how many sessions recorded one product view, two product views, and so on. I can use it to see how often product browsing extends beyond a single view. A session is identified by the pair of user ID and integer session ID, and repeated views of the same product count separately.
+
+## 7. Summarize purchase revenue by week
+
+```sql
+SELECT
+  DATE_TRUNC(PARSE_DATE('%Y%m%d', event_date), WEEK(MONDAY)) AS week_start,
+  COUNT(*) AS purchase_events,
+  COUNT(DISTINCT NULLIF(ecommerce.transaction_id, ''))
+    AS distinct_transaction_ids,
+  COUNT(ecommerce.purchase_revenue_in_usd) AS events_with_usd_revenue,
+  ROUND(SUM(ecommerce.purchase_revenue_in_usd), 2) AS purchase_revenue_usd
+FROM `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*`
+WHERE _TABLE_SUFFIX BETWEEN '20201201' AND '20201231'
+  AND event_name = 'purchase'
+GROUP BY week_start
+ORDER BY week_start;
+```
+
+This groups December purchase events into Monday-start weeks and reports recorded purchase revenue in USD alongside purchase-event and transaction-ID counts. This helps compare sales activity and check whether purchase counts, transaction IDs, or revenue coverage need further investigation. Revenue is summed at the event level before refunds, so repeated purchase events may inflate the total, and the first and last weeks cover only their December dates.
+
+## 8. Build an ordered session purchase funnel
+
+```sql
+WITH funnel_events AS (
+  SELECT
+    user_pseudo_id,
+    (
+      SELECT MAX(p.value.int_value)
+      FROM UNNEST(event_params) AS p
+      WHERE p.key = 'ga_session_id'
+    ) AS session_id,
+    event_name,
+    event_timestamp
+  FROM `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*`
+  WHERE _TABLE_SUFFIX BETWEEN '20201201' AND '20201231'
+    AND event_name IN ('view_item', 'add_to_cart', 'purchase')
+    AND user_pseudo_id IS NOT NULL
+),
+first_views AS (
+  SELECT user_pseudo_id, session_id, MIN(event_timestamp) AS view_ts
+  FROM funnel_events
+  WHERE event_name = 'view_item' AND session_id IS NOT NULL
+  GROUP BY user_pseudo_id, session_id
+),
+first_carts AS (
+  SELECT
+    v.user_pseudo_id,
+    v.session_id,
+    MIN(c.event_timestamp) AS cart_ts
+  FROM first_views AS v
+  LEFT JOIN funnel_events AS c
+    ON v.user_pseudo_id = c.user_pseudo_id
+    AND v.session_id = c.session_id
+    AND c.event_name = 'add_to_cart'
+    AND c.event_timestamp > v.view_ts
+  GROUP BY v.user_pseudo_id, v.session_id
+),
+session_steps AS (
+  SELECT
+    c.user_pseudo_id,
+    c.session_id,
+    c.cart_ts,
+    MIN(p.event_timestamp) AS purchase_ts
+  FROM first_carts AS c
+  LEFT JOIN funnel_events AS p
+    ON c.user_pseudo_id = p.user_pseudo_id
+    AND c.session_id = p.session_id
+    AND p.event_name = 'purchase'
+    AND p.event_timestamp > c.cart_ts
+  GROUP BY c.user_pseudo_id, c.session_id, c.cart_ts
+)
+SELECT
+  COUNT(*) AS sessions_with_view,
+  COUNTIF(cart_ts IS NOT NULL) AS sessions_with_cart_after_view,
+  COUNTIF(purchase_ts IS NOT NULL) AS sessions_with_purchase_after_cart,
+  ROUND(100 * SAFE_DIVIDE(COUNTIF(cart_ts IS NOT NULL), COUNT(*)), 2)
+    AS view_to_cart_pct,
+  ROUND(
+    100 * SAFE_DIVIDE(
+      COUNTIF(purchase_ts IS NOT NULL), COUNTIF(cart_ts IS NOT NULL)
+    ), 2
+  ) AS cart_to_purchase_pct
+FROM session_steps;
+```
+
+This follows December sessions from a product view to a later cart event and then to a later purchase, retaining sessions that drop out at each step. Each percentage uses the previous step as its denominator, which helps show where the largest drop-off occurred. The steps can involve different products within a session, and equal timestamps are excluded because the available ordering in this query requires strictly later events.
+
+## Appendix
+
+- [GitHub repository](https://github.com/gmonjarrez/ibm-6500-sql-learning-portfolio)
+- [GitHub Pages report](https://gmonjarrez.github.io/ibm-6500-sql-learning-portfolio/GA4-4-SQL-Pack.html)
+- [Google's GA4 ecommerce sample dataset](https://developers.google.com/analytics/bigquery/web-ecommerce-demo-dataset)
+- [Google's GA4 BigQuery query examples](https://developers.google.com/analytics/bigquery/basic-queries)
