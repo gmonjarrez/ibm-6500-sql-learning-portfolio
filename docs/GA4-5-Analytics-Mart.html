@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Milestone 5 | Analytics Mart v1</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Milestone 5 | Analytics Mart v1</h1>
+<p class="subtitle">Restaurant at Kellogg Ranch · IBM 6500</p>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#mart-design-brief" id="toc-mart-design-brief">1. Mart
+design brief</a></li>
+<li><a href="#bigquery-table" id="toc-bigquery-table">2. BigQuery
+table</a></li>
+<li><a href="#data-dictionary" id="toc-data-dictionary">3. Data
+dictionary</a></li>
+<li><a href="#validation-queries" id="toc-validation-queries">4.
+Validation queries</a>
+<ul>
+<li><a href="#row-counts-unique-keys-and-coverage"
+id="toc-row-counts-unique-keys-and-coverage">1. Row counts, unique keys,
+and coverage</a></li>
+<li><a href="#reconcile-kpi-totals-with-raw-events"
+id="toc-reconcile-kpi-totals-with-raw-events">2. Reconcile KPI totals
+with raw events</a></li>
+<li><a href="#dimension-missingness" id="toc-dimension-missingness">3.
+Dimension missingness</a></li>
+</ul></li>
+<li><a href="#appendix" id="toc-appendix">Appendix</a></li>
+</ul>
+</nav>
+<style>
+body { max-width: 66rem; margin: 0 auto; padding: 2rem 1.3rem; color: #1c2d2b; font: 16px/1.55 system-ui, sans-serif; }
+header { border-bottom: 3px solid #216357; padding-bottom: .8rem; }
+h1, h2, h3, a { color: #17564d; }
+h2 { margin-top: 2.2rem; }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; vertical-align: top; padding: .5rem .65rem; border-bottom: 1px solid #d2dfdc; }
+th, pre { background: #eff5f3; }
+pre { padding: 1rem; overflow-x: auto; }
+code { font-size: .87em; }
+@media print { body { padding: 0; } tr { break-inside: avoid; } }
+</style>
+<h2 id="mart-design-brief">1. Mart design brief</h2>
+<p>The Milestone 1 <a
+href="https://lahumada63.github.io/GA4-1---GP-Analytics-Blueprint/">Analytics
+Blueprint</a> asks how RKR visitors find the restaurant, use the menu,
+and act on reservation prompts. This mart supports Q1 (Collins
+Concierge), Q4 (website engagement), and Q5 (Instagram). It can also
+show traffic and reservation intent from tagged Facebook links for
+Q3.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Business question</th>
+<th>Looker Studio metric</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>How often do visitors view or explore the menu?</td>
+<td>Menu page views = sum of <code>menu_page_views</code>. Menu
+exploration rate = sum of <code>menu_explored</code> ÷ session
+rows.</td>
+</tr>
+<tr>
+<td>How often do website sessions reach a reservation CTA?</td>
+<td>CTA clicks = sum of <code>reservation_clicks</code>. Website click
+rate = sum of <code>clicked_reservation</code> ÷ session rows.</td>
+</tr>
+<tr>
+<td>How do the Collins Concierge placements compare?</td>
+<td>Filter to source beginning with <code>collins_concierge_</code> and
+medium <code>email</code>. Compare session counts and reservation click
+events ÷ sessions by source and campaign. Repeat clicks count, so this
+ratio can exceed 100%.</td>
+</tr>
+<tr>
+<td>How many Instagram sessions show reservation intent?</td>
+<td>Filter to source <code>instagram</code> and medium
+<code>organic_social</code>. Report session count and sum of
+<code>clicked_reservation</code> ÷ session rows.</td>
+</tr>
+</tbody>
+</table>
+<p>Format the rates as percentages and return null if the denominator is
+zero. Use a count of <code>session_key</code> for sessions. Connect
+Looker Studio directly to <code>rkr_session_mart_v1</code> and use
+<code>report_date</code> for the date control. Filter or group by
+acquisition, RKR landing page, device, or country.</p>
+<p><strong>Grain.</strong> One row per identifiable GA4 session with at
+least one event reported from an RKR web page in the selected export
+window. The key combines the pseudonymous browser/device ID and
+<code>ga_session_id</code>. Session grain gives each eligible session
+one denominator row and allows repeated CTA clicks to be counted
+separately from the number of sessions that clicked.</p>
+<p><strong>Scope.</strong> The source is the client’s daily GA4 BigQuery
+export. The mart includes events on <code>cpp.edu/rkr/</code> and its
+subpaths. Approved menu PDF downloads are measured from the menu page.
+Landing page means the first observed RKR page view, including when
+someone enters RKR from another CPP page. The date is the first RKR
+event date observed in the snapshot. Sessions crossing a snapshot
+boundary can be partial, so use a consistent build window and group by
+the stored date. OpenTable bookings, platform engagement, Qualtrics
+results, and menu or CTA placement drilldowns are outside v1. A
+<code>reserve_click</code> measures intent. Confirmed bookings require
+separate OpenTable data.</p>
+<h2 id="bigquery-table">2. BigQuery table</h2>
+<p><strong>Output</strong>
+<code>YOUR_PROJECT.YOUR_MART_DATASET.rkr_session_mart_v1</code>. The
+dictionary below lists all output fields and types.</p>
+<p>Run in GoogleSQL as one script so the validation queries can access
+the temporary event stage. Replace the source and destination
+identifiers with the team’s actual projects and datasets. Use datasets
+in the same BigQuery location. Choose the first and last finalized daily
+exports in the reporting window. The dates below are an example. Verify
+the PDF list against the reporting period and confirm the reservation
+tag fires only for approved RKR controls. Run the build once, then
+rebuild the same snapshot when the source is updated.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">DECLARE</span> start_suffix STRING <span class="kw">DEFAULT</span> <span class="st">&#39;20261101&#39;</span>;</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">DECLARE</span> end_suffix STRING <span class="kw">DEFAULT</span> <span class="st">&#39;20261118&#39;</span>;</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">-- Strip query strings and fragments before matching destinations.</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> TEMP <span class="kw">FUNCTION</span> url_key(url STRING) <span class="kw">AS</span> (</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">REGEXP_REPLACE</span>(<span class="fu">TRIM</span>(url), r<span class="st">&#39;[?#].*$&#39;</span>, <span class="st">&#39;&#39;</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> TEMP <span class="kw">FUNCTION</span> cpp_host(url STRING) <span class="kw">AS</span> (</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">LOWER</span>(NET.HOST(url)) <span class="kw">IN</span> (<span class="st">&#39;www.cpp.edu&#39;</span>, <span class="st">&#39;cpp.edu&#39;</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> TEMP <span class="kw">FUNCTION</span> url_path(url STRING) <span class="kw">AS</span> (</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  REGEXP_EXTRACT(url, r<span class="st">&#39;(?i)^https?://[^/]+(/.*)$&#39;</span>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> TEMP <span class="kw">TABLE</span> rkr_events <span class="kw">AS</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> extracted <span class="kw">AS</span> (</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="kw">SELECT</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    PARSE_DATE(<span class="st">&#39;%Y%m%d&#39;</span>, event_date) <span class="kw">AS</span> event_date,</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    event_timestamp,</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    event_name,</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">NULLIF</span>(<span class="fu">TRIM</span>(user_pseudo_id), <span class="st">&#39;&#39;</span>) <span class="kw">AS</span> user_pseudo_id,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">NULLIF</span>(<span class="fu">TRIM</span>(device.<span class="kw">category</span>), <span class="st">&#39;&#39;</span>) <span class="kw">AS</span> device_category,</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">NULLIF</span>(<span class="fu">TRIM</span>(geo.country), <span class="st">&#39;&#39;</span>) <span class="kw">AS</span> country,</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="co">-- Keep the export&#39;s session attribution together as a record.</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    session_traffic_source_last_click.cross_channel_campaign <span class="kw">AS</span> cross_channel,</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    session_traffic_source_last_click.manual_campaign <span class="kw">AS</span> manual,</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    (</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>      <span class="kw">SELECT</span> <span class="kw">AS</span> STRUCT</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>        <span class="fu">MAX</span>(<span class="cf">IF</span>(<span class="kw">key</span> <span class="op">=</span> <span class="st">&#39;ga_session_id&#39;</span>, <span class="fu">value</span>.int_value, <span class="kw">NULL</span>)) <span class="kw">AS</span> session_id,</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>        <span class="fu">MAX</span>(<span class="cf">IF</span>(<span class="kw">key</span> <span class="op">=</span> <span class="st">&#39;page_location&#39;</span>, <span class="fu">value</span>.string_value, <span class="kw">NULL</span>)) <span class="kw">AS</span> page_url,</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>        <span class="fu">MAX</span>(<span class="cf">IF</span>(<span class="kw">key</span> <span class="op">=</span> <span class="st">&#39;link_url&#39;</span>, <span class="fu">value</span>.string_value, <span class="kw">NULL</span>)) <span class="kw">AS</span> link_url,</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>        <span class="fu">MAX</span>(<span class="cf">IF</span>(<span class="kw">key</span> <span class="op">=</span> <span class="st">&#39;booking_provider&#39;</span>, <span class="fu">value</span>.string_value, <span class="kw">NULL</span>)) <span class="kw">AS</span> provider,</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>        <span class="fu">MAX</span>(<span class="cf">IF</span>(<span class="kw">key</span> <span class="op">=</span> <span class="st">&#39;cta_location&#39;</span>, <span class="fu">value</span>.string_value, <span class="kw">NULL</span>)) <span class="kw">AS</span> cta_location,</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>        <span class="fu">MAX</span>(<span class="cf">IF</span>(<span class="kw">key</span> <span class="op">=</span> <span class="st">&#39;interaction_type&#39;</span>, <span class="fu">value</span>.string_value, <span class="kw">NULL</span>)) <span class="kw">AS</span> interaction_type</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>      <span class="kw">FROM</span> UNNEST(event_params)</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    ) <span class="kw">AS</span> params</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> `YOUR_SOURCE_PROJECT.YOUR_GA4_DATASET.events_<span class="op">*</span>`</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>  <span class="kw">WHERE</span> _TABLE_SUFFIX <span class="kw">BETWEEN</span> start_suffix <span class="kw">AND</span> end_suffix</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>    <span class="kw">AND</span> REGEXP_CONTAINS(_TABLE_SUFFIX, r<span class="st">&#39;^\d{8}$&#39;</span>)</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>), normalized <span class="kw">AS</span> (</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>  <span class="kw">SELECT</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>,</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    url_path(url_key(params.page_url)) <span class="kw">AS</span> page_path,</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>    url_path(url_key(params.link_url)) <span class="kw">AS</span> link_path,</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>    <span class="cf">CASE</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>      <span class="cf">WHEN</span> <span class="fu">NULLIF</span>(<span class="fu">TRIM</span>(cross_channel.<span class="kw">source</span>), <span class="st">&#39;&#39;</span>) <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>       <span class="kw">AND</span> <span class="fu">NULLIF</span>(<span class="fu">TRIM</span>(cross_channel.medium), <span class="st">&#39;&#39;</span>) <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>        <span class="cf">THEN</span> STRUCT(</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>          <span class="fu">LOWER</span>(<span class="fu">TRIM</span>(cross_channel.<span class="kw">source</span>)) <span class="kw">AS</span> <span class="kw">source</span>,</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>          <span class="fu">LOWER</span>(<span class="fu">TRIM</span>(cross_channel.medium)) <span class="kw">AS</span> medium,</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>          <span class="fu">NULLIF</span>(<span class="fu">TRIM</span>(cross_channel.campaign_name), <span class="st">&#39;&#39;</span>) <span class="kw">AS</span> campaign,</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>          <span class="fu">NULLIF</span>(<span class="fu">TRIM</span>(cross_channel.default_channel_group), <span class="st">&#39;&#39;</span>) <span class="kw">AS</span> channel,</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>          <span class="dv">1</span> <span class="kw">AS</span> priority</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>      <span class="cf">WHEN</span> <span class="fu">NULLIF</span>(<span class="fu">TRIM</span>(manual.<span class="kw">source</span>), <span class="st">&#39;&#39;</span>) <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>       <span class="kw">AND</span> <span class="fu">NULLIF</span>(<span class="fu">TRIM</span>(manual.medium), <span class="st">&#39;&#39;</span>) <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>        <span class="cf">THEN</span> STRUCT(</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>          <span class="fu">LOWER</span>(<span class="fu">TRIM</span>(manual.<span class="kw">source</span>)) <span class="kw">AS</span> <span class="kw">source</span>,</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>          <span class="fu">LOWER</span>(<span class="fu">TRIM</span>(manual.medium)) <span class="kw">AS</span> medium,</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>          <span class="fu">NULLIF</span>(<span class="fu">TRIM</span>(manual.campaign_name), <span class="st">&#39;&#39;</span>) <span class="kw">AS</span> campaign,</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>          <span class="fu">CAST</span>(<span class="kw">NULL</span> <span class="kw">AS</span> STRING) <span class="kw">AS</span> channel,</span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>          <span class="dv">2</span> <span class="kw">AS</span> priority</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>    <span class="cf">END</span> <span class="kw">AS</span> acquisition</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> extracted</span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>  event_date,</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>  event_timestamp,</span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>  event_name,</span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>  page_path,</span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>  device_category,</span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>  country,</span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>  acquisition,</span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>  <span class="cf">IF</span>(</span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>    user_pseudo_id <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">AND</span> params.session_id <span class="op">&gt;</span> <span class="dv">0</span>,</span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>    TO_HEX(SHA256(TO_JSON_STRING(STRUCT(user_pseudo_id, params.session_id)))),</span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>    <span class="kw">NULL</span></span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>  ) <span class="kw">AS</span> session_key,</span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>  event_name <span class="op">=</span> <span class="st">&#39;page_view&#39;</span> <span class="kw">AND</span> page_path <span class="op">=</span> <span class="st">&#39;/rkr/menu.shtml&#39;</span> <span class="kw">AS</span> is_menu_view,</span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>  event_name <span class="op">=</span> <span class="st">&#39;menu_section_open&#39;</span> <span class="kw">AND</span> page_path <span class="op">=</span> <span class="st">&#39;/rkr/menu.shtml&#39;</span></span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>    <span class="kw">AS</span> is_menu_section_open,</span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>  event_name <span class="op">=</span> <span class="st">&#39;file_download&#39;</span> <span class="kw">AND</span> page_path <span class="op">=</span> <span class="st">&#39;/rkr/menu.shtml&#39;</span></span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>    <span class="kw">AND</span> cpp_host(params.link_url)</span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>    <span class="kw">AND</span> link_path <span class="kw">IN</span> (</span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>      <span class="st">&#39;/rkr/menu-pdfs/lunch-service-menu_fall-2026_lunch-8.5x14_final_printed.pdf&#39;</span>,</span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>      <span class="st">&#39;/rkr/menu-pdfs/dinner-service-menu_fall-2026_8.5x14_final_printed.pdf&#39;</span>,</span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>      <span class="st">&#39;/rkr/menu-pdfs/1_service-menu_summer-2026_beverage-8.5x14_final.pdf&#39;</span>,</span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>      <span class="st">&#39;/rkr/menu-pdfs/3_-service-menu_summer-2026_wine-by-bottle_8.5x14_final.pdf&#39;</span></span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>    ) <span class="kw">AS</span> is_menu_download,</span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>  event_name <span class="op">=</span> <span class="st">&#39;reserve_click&#39;</span></span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>    <span class="kw">AND</span> <span class="fu">LOWER</span>(<span class="fu">TRIM</span>(params.provider)) <span class="op">=</span> <span class="st">&#39;opentable&#39;</span></span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>    <span class="kw">AND</span> <span class="fu">NULLIF</span>(<span class="fu">TRIM</span>(params.cta_location), <span class="st">&#39;&#39;</span>) <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span></span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a>    <span class="kw">AND</span> <span class="fu">NULLIF</span>(<span class="fu">TRIM</span>(params.interaction_type), <span class="st">&#39;&#39;</span>) <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">AS</span> is_reserve_click</span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> normalized</span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> cpp_host(params.page_url)</span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>  <span class="kw">AND</span> (page_path <span class="op">=</span> <span class="st">&#39;/rkr&#39;</span> <span class="kw">OR</span> STARTS_WITH(page_path, <span class="st">&#39;/rkr/&#39;</span>));</span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a><span class="co">-- Avoid replacing a populated mart with an empty snapshot.</span></span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a>ASSERT (<span class="kw">SELECT</span> COUNTIF(session_key <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span>) <span class="op">&gt;</span> <span class="dv">0</span> <span class="kw">FROM</span> rkr_events)</span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a>  <span class="kw">AS</span> <span class="st">&#39;No identifiable RKR events in the selected export window&#39;</span>;</span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a><span class="co">-- Collapse eligible events to one row per session. Use the first RKR event</span></span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a><span class="co">-- for device and country and prioritize complete cross-channel attribution.</span></span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">OR</span> <span class="kw">REPLACE</span> <span class="kw">TABLE</span> `YOUR_PROJECT.YOUR_MART_DATASET.rkr_session_mart_v1`</span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a><span class="kw">PARTITION</span> <span class="kw">BY</span> report_date</span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a><span class="kw">CLUSTER</span> <span class="kw">BY</span> session_source, session_medium, device_category</span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a><span class="kw">AS</span></span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> sessions <span class="kw">AS</span> (</span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a>  <span class="kw">SELECT</span></span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a>    session_key,</span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>    <span class="fu">MIN</span>(event_date) <span class="kw">AS</span> report_date,</span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>    ARRAY_AGG(<span class="cf">IF</span>(event_name <span class="op">=</span> <span class="st">&#39;page_view&#39;</span>, page_path, <span class="kw">NULL</span>)</span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>      IGNORE <span class="kw">NULLS</span> <span class="kw">ORDER</span> <span class="kw">BY</span> event_timestamp, page_path <span class="kw">LIMIT</span> <span class="dv">1</span>)[SAFE_OFFSET(<span class="dv">0</span>)]</span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>      <span class="kw">AS</span> landing_page,</span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>    ARRAY_AGG(STRUCT(device_category, country)</span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>      <span class="kw">ORDER</span> <span class="kw">BY</span> event_timestamp, device_category, country <span class="kw">LIMIT</span> <span class="dv">1</span>)[OFFSET(<span class="dv">0</span>)]</span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a>      <span class="kw">AS</span> first_dimensions,</span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>    ARRAY_AGG(acquisition IGNORE <span class="kw">NULLS</span></span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a>      <span class="kw">ORDER</span> <span class="kw">BY</span> acquisition.priority, event_timestamp, acquisition.<span class="kw">source</span>,</span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a>        acquisition.medium, acquisition.campaign, acquisition.channel</span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a>      <span class="kw">LIMIT</span> <span class="dv">1</span>)[SAFE_OFFSET(<span class="dv">0</span>)] <span class="kw">AS</span> session_acquisition,</span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a>    COUNTIF(is_menu_view) <span class="kw">AS</span> menu_page_views,</span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a>    COUNTIF(is_menu_section_open <span class="kw">OR</span> is_menu_download) <span class="kw">AS</span> menu_interactions,</span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a>    COUNTIF(is_reserve_click) <span class="kw">AS</span> reservation_clicks</span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> rkr_events</span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a>  <span class="kw">WHERE</span> session_key <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span></span>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a>  <span class="kw">GROUP</span> <span class="kw">BY</span> session_key</span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a>  report_date,</span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a>  session_key,</span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>  session_acquisition.channel <span class="kw">AS</span> session_channel,</span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a>  session_acquisition.<span class="kw">source</span> <span class="kw">AS</span> session_source,</span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a>  session_acquisition.medium <span class="kw">AS</span> session_medium,</span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a>  session_acquisition.campaign <span class="kw">AS</span> session_campaign,</span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a>  landing_page,</span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a>  first_dimensions.device_category <span class="kw">AS</span> device_category,</span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a>  first_dimensions.country <span class="kw">AS</span> country,</span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a>  menu_page_views,</span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a>  <span class="cf">IF</span>(menu_interactions <span class="op">&gt;</span> <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>) <span class="kw">AS</span> menu_explored,</span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a>  reservation_clicks,</span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a>  <span class="cf">IF</span>(reservation_clicks <span class="op">&gt;</span> <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>) <span class="kw">AS</span> clicked_reservation</span>
+<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> sessions;</span></code></pre></div>
+<h2 id="data-dictionary">3. Data dictionary</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Definition</th>
+<th>Caveat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>report_date</code></td>
+<td>DATE</td>
+<td>Date of the earliest in-scope RKR event in the snapshot, in the GA4
+property’s time zone.</td>
+<td>A campus session can begin before its first RKR event.</td>
+</tr>
+<tr>
+<td><code>session_key</code></td>
+<td>STRING</td>
+<td>SHA-256 hash of the exported pseudonymous ID and GA4 session ID as a
+structured pair.</td>
+<td>Both IDs are required. A hash is still pseudonymous. Keep row-level
+data in authorized BigQuery access.</td>
+</tr>
+<tr>
+<td><code>session_channel</code></td>
+<td>STRING</td>
+<td>Exported session default channel group.</td>
+<td>May be null, including when attribution uses the manual campaign
+record.</td>
+</tr>
+<tr>
+<td><code>session_source</code></td>
+<td>STRING</td>
+<td>Exported session acquisition source, trimmed and lowercased.</td>
+<td>Uses the manual session campaign pair if a complete cross-channel
+pair is unavailable. Can be null.</td>
+</tr>
+<tr>
+<td><code>session_medium</code></td>
+<td>STRING</td>
+<td>Exported session acquisition medium, trimmed and lowercased.</td>
+<td>Taken from the same attribution record as source. Can be null.</td>
+</tr>
+<tr>
+<td><code>session_campaign</code></td>
+<td>STRING</td>
+<td>Name of the selected session campaign.</td>
+<td>Missing or untagged campaign names can be null.</td>
+</tr>
+<tr>
+<td><code>landing_page</code></td>
+<td>STRING</td>
+<td>Path of the earliest RKR page view, with query string and fragment
+removed.</td>
+<td>Null when the session has an RKR event but no RKR page view.
+Timestamp ties sort by path.</td>
+</tr>
+<tr>
+<td><code>device_category</code></td>
+<td>STRING</td>
+<td>Device category on the first observed RKR event.</td>
+<td>Null when the export omits it.</td>
+</tr>
+<tr>
+<td><code>country</code></td>
+<td>STRING</td>
+<td>Exported country on the first observed RKR event.</td>
+<td>Geo is approximate. Missing values remain null.</td>
+</tr>
+<tr>
+<td><code>menu_page_views</code></td>
+<td>INT64</td>
+<td>Number of <code>page_view</code> events on
+<code>/rkr/menu.shtml</code>.</td>
+<td>Reopens and reloads can count again.</td>
+</tr>
+<tr>
+<td><code>menu_explored</code></td>
+<td>INT64</td>
+<td>1 if a session contains a menu expansion or approved PDF click,
+otherwise 0.</td>
+<td>Counts each session once even if it contains both. PDF clicks
+indicate intent to open the file.</td>
+</tr>
+<tr>
+<td><code>reservation_clicks</code></td>
+<td>INT64</td>
+<td>Number of RKR <code>reserve_click</code> events with OpenTable
+provider and populated CTA location and interaction type.</td>
+<td>Includes repeat activations. The event is assumed to fire only for
+QA-approved controls.</td>
+</tr>
+<tr>
+<td><code>clicked_reservation</code></td>
+<td>INT64</td>
+<td>1 if the session has any qualifying reservation click, otherwise
+0.</td>
+<td>Embedded widget clicks require provider support to be
+observable.</td>
+</tr>
+</tbody>
+</table>
+<p>The daily export represents observed data. Consent, blockers, and
+incomplete tagging can reduce coverage, and sessions missing either key
+component are excluded. The mart applies no reporting thresholds or
+modeled adjustments. GA4 interface totals can differ. Keep validation
+results with the team’s private BigQuery work. <a
+href="https://support.google.com/analytics/answer/7029846">GA4 BigQuery
+export schema</a> · <a href="https://www.cpp.edu/rkr/menu.shtml">RKR
+menu and PDF destinations</a>.</p>
+<h2 id="validation-queries">4. Validation queries</h2>
+<p>Append these queries after the build in the same BigQuery script. Run
+against a confirmed RKR export before connecting the dashboard. The
+checks below describe expected outcomes. Live counts require access to
+the client export.</p>
+<h3 id="row-counts-unique-keys-and-coverage">1. Row counts, unique keys,
+and coverage</h3>
+<p>Compare in-scope event coverage with mart coverage by date. The two
+date ranges can differ because the mart dates each session by its first
+observed RKR event. <code>duplicate_session_rows</code> should be zero
+on every date.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> raw_dates <span class="kw">AS</span> (</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">SELECT</span> event_date <span class="kw">AS</span> report_date, <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> raw_rkr_events,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    COUNTIF(session_key <span class="kw">IS</span> <span class="kw">NULL</span>) <span class="kw">AS</span> raw_events_missing_session_key</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> rkr_events</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">GROUP</span> <span class="kw">BY</span> <span class="dv">1</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>), mart_dates <span class="kw">AS</span> (</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">SELECT</span> report_date, <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> session_rows</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> `YOUR_PROJECT.YOUR_MART_DATASET.rkr_session_mart_v1`</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">GROUP</span> <span class="kw">BY</span> <span class="dv">1</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>), duplicate_dates <span class="kw">AS</span> (</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">SELECT</span> report_date, <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> duplicate_session_rows</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> (</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">SELECT</span> report_date,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ROW_NUMBER</span>() <span class="kw">OVER</span> (<span class="kw">PARTITION</span> <span class="kw">BY</span> session_key <span class="kw">ORDER</span> <span class="kw">BY</span> report_date) <span class="kw">AS</span> key_row</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FROM</span> `YOUR_PROJECT.YOUR_MART_DATASET.rkr_session_mart_v1`</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="kw">WHERE</span> key_row <span class="op">&gt;</span> <span class="dv">1</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="kw">GROUP</span> <span class="kw">BY</span> <span class="dv">1</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="dt">day</span> <span class="kw">AS</span> report_date,</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">COALESCE</span>(raw_rkr_events, <span class="dv">0</span>) <span class="kw">AS</span> raw_rkr_events,</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">COALESCE</span>(raw_events_missing_session_key, <span class="dv">0</span>) <span class="kw">AS</span> raw_events_missing_session_key,</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">COALESCE</span>(session_rows, <span class="dv">0</span>) <span class="kw">AS</span> session_rows,</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">COALESCE</span>(duplicate_session_rows, <span class="dv">0</span>) <span class="kw">AS</span> duplicate_session_rows</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> UNNEST(GENERATE_DATE_ARRAY(</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  PARSE_DATE(<span class="st">&#39;%Y%m%d&#39;</span>, start_suffix), PARSE_DATE(<span class="st">&#39;%Y%m%d&#39;</span>, end_suffix)</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>)) <span class="kw">AS</span> <span class="dt">day</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="kw">LEFT</span> <span class="kw">JOIN</span> raw_dates <span class="kw">AS</span> r <span class="kw">ON</span> <span class="dt">day</span> <span class="op">=</span> r.report_date</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="kw">LEFT</span> <span class="kw">JOIN</span> mart_dates <span class="kw">AS</span> m <span class="kw">ON</span> <span class="dt">day</span> <span class="op">=</span> m.report_date</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="kw">LEFT</span> <span class="kw">JOIN</span> duplicate_dates <span class="kw">AS</span> d <span class="kw">ON</span> <span class="dt">day</span> <span class="op">=</span> d.report_date</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> <span class="dt">day</span>;</span></code></pre></div>
+<h3 id="reconcile-kpi-totals-with-raw-events">2. Reconcile KPI totals
+with raw events</h3>
+<p>Count directly from the filtered event rows before session
+aggregation. Each difference should be zero. Zero qualifying
+interactions should be investigated with a known tagged test session
+when tracking is expected to be active.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> <span class="dt">raw</span> <span class="kw">AS</span> (</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">SELECT</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COUNT</span>(<span class="kw">DISTINCT</span> session_key) <span class="kw">AS</span> sessions,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    COUNTIF(session_key <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">AND</span> is_menu_view) <span class="kw">AS</span> menu_views,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    COUNTIF(session_key <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">AND</span> is_reserve_click) <span class="kw">AS</span> reserve_clicks,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COUNT</span>(<span class="kw">DISTINCT</span> <span class="cf">IF</span>(is_menu_section_open <span class="kw">OR</span> is_menu_download,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>      session_key, <span class="kw">NULL</span>)) <span class="kw">AS</span> sessions_explored,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COUNT</span>(<span class="kw">DISTINCT</span> <span class="cf">IF</span>(is_reserve_click, session_key, <span class="kw">NULL</span>))</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>      <span class="kw">AS</span> sessions_clicked,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    COUNTIF(event_name <span class="op">=</span> <span class="st">&#39;reserve_click&#39;</span> <span class="kw">AND</span> <span class="kw">NOT</span> <span class="fu">COALESCE</span>(is_reserve_click, <span class="kw">FALSE</span>))</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>      <span class="kw">AS</span> reserve_events_with_invalid_parameters</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> rkr_events</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>), mart <span class="kw">AS</span> (</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">SELECT</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> sessions,</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COALESCE</span>(<span class="fu">SUM</span>(menu_page_views), <span class="dv">0</span>) <span class="kw">AS</span> menu_views,</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COALESCE</span>(<span class="fu">SUM</span>(reservation_clicks), <span class="dv">0</span>) <span class="kw">AS</span> reserve_clicks,</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COALESCE</span>(<span class="fu">SUM</span>(menu_explored), <span class="dv">0</span>) <span class="kw">AS</span> sessions_explored,</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COALESCE</span>(<span class="fu">SUM</span>(clicked_reservation), <span class="dv">0</span>) <span class="kw">AS</span> sessions_clicked</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> `YOUR_PROJECT.YOUR_MART_DATASET.rkr_session_mart_v1`</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  <span class="dt">raw</span>.sessions <span class="kw">AS</span> eligible_raw_sessions,</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  <span class="dt">raw</span>.reserve_events_with_invalid_parameters,</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  mart.sessions <span class="op">-</span> <span class="dt">raw</span>.sessions <span class="kw">AS</span> session_difference,</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  mart.menu_views <span class="op">-</span> <span class="dt">raw</span>.menu_views <span class="kw">AS</span> menu_view_difference,</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  mart.reserve_clicks <span class="op">-</span> <span class="dt">raw</span>.reserve_clicks <span class="kw">AS</span> reserve_click_difference,</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  mart.sessions_explored <span class="op">-</span> <span class="dt">raw</span>.sessions_explored <span class="kw">AS</span> explored_session_difference,</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  mart.sessions_clicked <span class="op">-</span> <span class="dt">raw</span>.sessions_clicked <span class="kw">AS</span> clicked_session_difference</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> <span class="dt">raw</span> <span class="kw">CROSS</span> <span class="kw">JOIN</span> mart;</span></code></pre></div>
+<h3 id="dimension-missingness">3. Dimension missingness</h3>
+<p>Compare missing counts and proportions across dates. Check whether
+known newsletter and Instagram tests appear with their planned source
+and medium.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  report_date,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> session_rows,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  COUNTIF(session_source <span class="kw">IS</span> <span class="kw">NULL</span> <span class="kw">OR</span> session_medium <span class="kw">IS</span> <span class="kw">NULL</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">AS</span> missing_source_or_medium,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  SAFE_DIVIDE(COUNTIF(session_source <span class="kw">IS</span> <span class="kw">NULL</span> <span class="kw">OR</span> session_medium <span class="kw">IS</span> <span class="kw">NULL</span>),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">COUNT</span>(<span class="op">*</span>)) <span class="kw">AS</span> missing_acquisition_share,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  COUNTIF(session_channel <span class="kw">IS</span> <span class="kw">NULL</span>) <span class="kw">AS</span> missing_channel,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  COUNTIF(session_campaign <span class="kw">IS</span> <span class="kw">NULL</span>) <span class="kw">AS</span> missing_campaign,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  COUNTIF(landing_page <span class="kw">IS</span> <span class="kw">NULL</span>) <span class="kw">AS</span> missing_landing_page,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  COUNTIF(device_category <span class="kw">IS</span> <span class="kw">NULL</span>) <span class="kw">AS</span> missing_device,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  COUNTIF(country <span class="kw">IS</span> <span class="kw">NULL</span>) <span class="kw">AS</span> missing_country,</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  COUNTIF(STARTS_WITH(session_source, <span class="st">&#39;collins_concierge_&#39;</span>)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">AND</span> session_medium <span class="op">=</span> <span class="st">&#39;email&#39;</span>) <span class="kw">AS</span> newsletter_sessions,</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  COUNTIF(session_source <span class="op">=</span> <span class="st">&#39;instagram&#39;</span> <span class="kw">AND</span> session_medium <span class="op">=</span> <span class="st">&#39;organic_social&#39;</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">AS</span> instagram_sessions</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> `YOUR_PROJECT.YOUR_MART_DATASET.rkr_session_mart_v1`</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> report_date</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> report_date;</span></code></pre></div>
+<h2 id="appendix">Appendix</h2>
+<ul>
+<li><a
+href="https://github.com/gmonjarrez/ibm-6500-sql-learning-portfolio">GitHub
+repository</a></li>
+<li><a
+href="https://gmonjarrez.github.io/ibm-6500-sql-learning-portfolio/GA4-5-Analytics-Mart.html">GitHub
+Pages report</a></li>
+</ul>
+</body>
+</html>
