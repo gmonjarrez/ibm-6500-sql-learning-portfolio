@@ -1,0 +1,185 @@
+---
+title: "Case 31: Measurement Model Assessment"
+author: "Georgia Monjarrez"
+date: "2026-11-25"
+format:
+  html:
+    toc: true
+    toc-title: "Table of contents"
+    toc-depth: 3
+    toc-location: right
+    number-sections: true
+    smooth-scroll: true
+    embed-resources: true
+    title-block-style: default
+    date-format: long
+    code-fold: true
+    code-summary: "R code"
+---
+
+## Purpose and case context
+
+This CFA tests whether Case 31 responses support two related factors: employee proficiency and operational effectiveness. Members can rate staff highly while having concerns about statements or loans.
+
+## Constructs and indicators
+
+| Factor | Fields in the SPSS file | Response scale used |
+|---|---|---|
+| Employee proficiencies | `q3` courtesy, `q4` helpfulness, `q5` professionalism, `q6` availability | 1–5, strongly disagree to strongly agree |
+| Operational effectiveness | `q9_r` statement frequency | 1–5, never to too often after reversal |
+| Operational effectiveness | `q10_r` statement accuracy | 1–4, poor to excellent after reversal |
+| Operational effectiveness | `q11` statement clarity, `q12` account confidentiality | Original coding is 1 = yes, 2 = no. Analysis coding is 1 = no, 2 = yes. |
+| Operational effectiveness | `q31` financial information confidentiality, `q32` processing speed, `q33` whether services meet needs, `q34` application ease | 1–5, strongly disagree to strongly agree |
+
+Q38 groups respondents by headquarters residence (R4a–c). Q7 describes savings-rate opinions (R1), and Q28, the borrowing screener, is absent from the data. Q13r–Q26r measure service awareness (R4b, R5), with Q13r predicting Q33 in H1. Q8r and Q30 are the paired loan-rate measures (H2), and Q37r rates overall management (R4c, R6). These single-item measures remain observed because their measurement error cannot be estimated without extra constraints. Q33 also serves as an operational indicator.
+
+## Data preparation and reverse coding
+
+```{r}
+suppressPackageStartupMessages({
+  library(haven)
+  library(lavaan)
+})
+file <- Sys.getenv("CASE31_DATA", "Case 31 Data_efcu_4.sav")
+raw <- read_sav(file)
+items <- c("q3", "q4", "q5", "q6", "q9_r", "q10_r", "q11", "q12",
+           "q31", "q32", "q33", "q34")
+stopifnot(all(c(items, "q9", "q10") %in% names(raw)))
+knitr::kable(data.frame(Rows = nrow(raw), Columns = ncol(raw)))
+knitr::kable(data.frame(Field = items,
+                        Imported_type = vapply(raw[items], typeof, "")))
+
+x <- as.data.frame(lapply(raw[items], as.numeric))
+stopifnot(all(x$q9_r == 6 - as.numeric(raw$q9)),
+          all(x$q10_r == 5 - as.numeric(raw$q10)))
+knitr::kable(as.data.frame.matrix(table(Original_Q9 = raw$q9,
+                                        Reversed_Q9 = x$q9_r)))
+original_q12 <- x$q12
+x$q11 <- 3 - x$q11
+x$q12 <- ifelse(x$q12 %in% c(1, 2), 3 - x$q12, NA_real_)
+```
+
+Q9 was originally coded 1 (too often), 2 (very often), 3 (about right), 4 (not often enough), and 5 (never). The stored `q9_r` equals `6 - q9` for all records. The table confirms that 99 responses stayed at 3 and 29 moved from 4 to 2. Higher values indicate more frequent statements. The stored Q10 reversal also matches the documented coding.
+
+I treated the `r sum(original_q12 == 3)` undocumented Q12 responses coded 3 as missing. The 12 raw indicators had `r sum(is.na(raw[items]))` system-missing values. All residence groups were included.
+
+```{r}
+desc <- t(vapply(x, function(v) {
+  c(N = sum(!is.na(v)), Missing = sum(is.na(v)), Mean = mean(v, na.rm = TRUE),
+    SD = sd(v, na.rm = TRUE), setNames(as.numeric(table(factor(v, levels = 1:5))),
+                                      paste("Count", 1:5)))
+}, numeric(9)))
+knitr::kable(desc, digits = 2, caption = "Indicator descriptives and response counts")
+```
+
+## Hypothesized model and estimation
+
+Each item loads on one factor, with cross-loadings and residual correlations fixed at zero. Fixing each factor variance at 1 sets its scale. The model has 53 degrees of freedom (66 indicator correlations minus 12 loadings and one factor correlation).
+
+WLSMV treats responses as ordered categories. The analysis uses the same 106 complete cases throughout, excluding 22 members (17.2%) with missing Q12 responses.
+
+```{r}
+model <- '
+  Employee_Proficiencies =~ q3 + q4 + q5 + q6
+  Operational_Effectiveness =~ q9_r + q10_r + q11 + q12 +
+                               q31 + q32 + q33 + q34
+'
+complete <- x[complete.cases(x), ]
+fit <- cfa(model, data = complete, ordered = items, estimator = "WLSMV",
+           std.lv = TRUE, missing = "listwise")
+stopifnot(lavInspect(fit, "converged"))
+```
+
+## CFA results
+
+### Model fit
+
+```{r}
+fit_table <- function(object) {
+  measures <- c("chisq.scaled", "df.scaled", "pvalue.scaled", "cfi.scaled",
+                "tli.scaled", "rmsea.scaled", "rmsea.ci.lower.scaled",
+                "rmsea.ci.upper.scaled", "srmr")
+  values <- unname(fitMeasures(object, measures))
+  rows <- c("Scaled chi-square", "df", "p", "Scaled CFI", "Scaled TLI",
+            "Scaled RMSEA", "90% CI lower", "90% CI upper", "SRMR")
+  printed <- formatC(values, format = "f", digits = 3)
+  printed[2] <- as.character(as.integer(values[2]))
+  printed[3] <- format.pval(values[3], digits = 3, eps = .001)
+  data.frame(Measure = rows, Estimate = printed)
+}
+knitr::kable(fit_table(fit))
+```
+
+Fit was poor. The scaled chi-square rejected exact fit, CFI and TLI fell below .90, and RMSEA and SRMR exceeded .18. Lavaan flagged a near-perfect ordinal correlation between Q11 and Q6 and a nearly singular parameter covariance matrix. Only three members answered “no” to Q11, so its estimate is unstable.
+
+### Loadings and convergent validity
+
+```{r}
+standardized <- standardizedSolution(fit)
+loadings <- subset(standardized, op == "=~")
+display <- loadings[c("lhs", "rhs", "est.std", "se", "pvalue")]
+display$lhs <- gsub("_", " ", display$lhs)
+display$pvalue <- format.pval(display$pvalue, digits = 3, eps = .001)
+names(display) <- c("Factor", "Item", "Std. loading", "SE", "p")
+knitr::kable(display, digits = 3)
+
+reliability <- function(object) {
+  s <- subset(standardizedSolution(object), op == "=~")
+  t(vapply(split(s$est.std, s$lhs), function(lambda) {
+    error <- 1 - lambda^2
+    c(CR = sum(lambda)^2 / (sum(lambda)^2 + sum(error)),
+      AVE = sum(lambda^2) / (sum(lambda^2) + sum(error)))
+  }, numeric(2)))
+}
+quality <- reliability(fit)
+knitr::kable(quality, digits = 3,
+             caption = "Composite reliability and average variance extracted")
+```
+
+Employee loadings ranged from .707 to .936 (all p < .001). Helpfulness loaded strongest. CR (.916) and AVE (.734) support internal consistency and convergence.
+
+Operations showed weaker convergence (CR = .693, AVE = .286). Q10, Q32, and Q33 loaded above .50. Q9 fell below .50, and Q12, Q31, and Q34 loaded below .40 with p > .05. Q11 loaded .947, but its SE was .396. For ordered items, CR and AVE refer to the underlying response scale.
+
+### Discriminant validity and model problems
+
+```{r}
+association <- subset(standardized, op == "~~" & lhs != rhs)
+knitr::kable(data.frame(
+  Correlation = association$est.std, Lower_95 = association$ci.lower,
+  Upper_95 = association$ci.upper, Squared_correlation = association$est.std^2,
+  Employee_sqrt_AVE = sqrt(quality[1, "AVE"]),
+  Operations_sqrt_AVE = sqrt(quality[2, "AVE"])
+), digits = 3)
+
+mi <- modindices(fit, sort. = TRUE)
+knitr::kable(head(mi[c("lhs", "op", "rhs", "mi", "epc")], 5), digits = 2,
+             caption = "Largest modification indices, used for diagnosis")
+```
+
+The factor correlation was .630 (95% CI [.316, .944]). It was below the square root of employee AVE (.857) but above the square root of operations AVE (.535), leaving mixed evidence of discriminant validity. The largest modification index pointed to Q31, which asks about personnel and may overlap with employee proficiency. The original model was retained.
+
+### Sensitivity to estimation and missing data
+
+```{r}
+sensitivity <- cfa(model, data = x, estimator = "MLR", std.lv = TRUE,
+                   missing = "fiml")
+knitr::kable(fit_table(sensitivity))
+knitr::kable(reliability(sensitivity), digits = 3)
+```
+
+The MLR sensitivity check treats scores as numeric and uses FIML for all 128 cases under a missing-at-random assumption. Fit was still poor (CFI = .779, RMSEA = .106), operational AVE fell to .139, and Q11’s loading fell to .286. Lavaan again flagged a nearly singular parameter covariance matrix.
+
+## Conclusion
+
+I would hold off on structural testing. Employee proficiencies had strong loadings, while the operations items showed low shared variance and Q11 was sensitive to the estimator. Before testing structural paths, I would verify Q12’s coding and review whether statements, confidentiality, and loan processes belong in one factor.
+
+## References
+
+- *Case 31: Employees Federal Credit Union*. Course questionnaire, SPSS data file, construct and measurement key, and data-analysis table.
+- Rosseel, Y. (2012). lavaan: An R package for structural equation modeling. *Journal of Statistical Software, 48*(2), 1–36. [https://doi.org/10.18637/jss.v048.i02](https://doi.org/10.18637/jss.v048.i02)
+- Fornell, C., & Larcker, D. F. (1981). Evaluating structural equation models with unobservable variables and measurement error. *Journal of Marketing Research, 18*(1), 39–50. [https://doi.org/10.1177/002224378101800104](https://doi.org/10.1177/002224378101800104)
+
+## Appendix: Reproducibility and Publication Links
+
+- [GitHub repository](https://github.com/gmonjarrez/ibm-6500-sql-learning-portfolio)
+- [GitHub Pages report](https://gmonjarrez.github.io/ibm-6500-sql-learning-portfolio/M13-Case31-Measurement-Model.html)
