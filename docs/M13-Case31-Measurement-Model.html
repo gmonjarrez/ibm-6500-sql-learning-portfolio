@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Georgia Monjarrez" />
+  <meta name="dcterms.date" content="2026-11-25" />
+  <title>Case 31: Measurement Model Assessment</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style>
+html { scroll-behavior: smooth; }
+body { box-sizing: border-box; max-width: 1280px; margin: auto; padding: 1.15rem 1.5rem 4rem; color: #24272a; background: #fff; font: 17px/1.55 system-ui, sans-serif; }
+h1,h2,h3 { color: inherit; line-height: 1.15; font-weight: 700; }
+h1.title { margin: 0 0 1.15rem; font-size: 2.4rem; }
+h2 { margin: 2.5rem 0 .85rem; font-size: 1.95rem; }
+h3 { margin: 1.65rem 0 .75rem; font-size: 1.38rem; }
+p { margin: .7rem 0 1rem; }
+a { color: #2463ae; }
+.meta { display: grid; grid-template-columns: 1fr 1fr; margin-bottom: 2rem; }
+.meta span { display: block; font-size: .75rem; text-transform: uppercase; color: #52565a; }
+#TOC { font-size: .9rem; }
+#TOC > h2 { margin: 0 0 .25rem; font-size: .95rem; }
+#TOC ul { list-style: none; padding-left: .65rem; margin: 0; }
+#TOC > ul { border-left: 1px solid #e4e4e4; }
+#TOC li { margin: .2rem 0; }
+#TOC a { color: inherit; text-decoration: none; }
+#TOC a:hover { color: #2463ae; text-decoration: underline; }
+body { display: grid; grid-template-columns: minmax(0, 1fr) clamp(8rem, 23vw, 14rem);
+       column-gap: clamp(.75rem, 3vw, 2.75rem); align-items: start; }
+main { grid-column: 1; grid-row: 1; min-width: 0; }
+#TOC { grid-column: 2; grid-row: 1; position: sticky; top: 1.15rem;
+        max-height: calc(100vh - 2.3rem); overflow: auto; overflow-wrap: anywhere; }
+@media (max-width: 640px) {
+  body { padding-inline: .75rem; font-size: 15px; }
+  h1.title { font-size: 1.65rem; }
+  #TOC { font-size: .75rem; }
+  main table { display: block; overflow-x: auto; }
+}
+table { display: table; width: 100%; font-size: .85em; }
+table caption { text-align: left; font-weight: 600; }
+pre { background: #f6f7f8; border: 1px solid #e4e6e7; padding: .75rem; }
+details summary { cursor: pointer; color: #454a50; font-size: .9em; }
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<h2 id="toc-title">Table of contents</h2>
+<ul>
+<li><a href="#purpose-and-case-context" id="toc-purpose-and-case-context"><span class="toc-section-number">1</span> Purpose and case context</a></li>
+<li><a href="#constructs-and-indicators" id="toc-constructs-and-indicators"><span class="toc-section-number">2</span> Constructs and indicators</a></li>
+<li><a href="#data-preparation-and-reverse-coding" id="toc-data-preparation-and-reverse-coding"><span class="toc-section-number">3</span> Data preparation and reverse
+coding</a></li>
+<li><a href="#hypothesized-model-and-estimation" id="toc-hypothesized-model-and-estimation"><span class="toc-section-number">4</span> Hypothesized model and
+estimation</a></li>
+<li><a href="#cfa-results" id="toc-cfa-results"><span class="toc-section-number">5</span> CFA results</a>
+<ul>
+<li><a href="#model-fit" id="toc-model-fit"><span class="toc-section-number">5.1</span> Model fit</a></li>
+<li><a href="#loadings-and-convergent-validity" id="toc-loadings-and-convergent-validity"><span class="toc-section-number">5.2</span> Loadings and convergent
+validity</a></li>
+<li><a href="#discriminant-validity-and-model-problems" id="toc-discriminant-validity-and-model-problems"><span class="toc-section-number">5.3</span> Discriminant validity and model
+problems</a></li>
+<li><a href="#sensitivity-to-estimation-and-missing-data" id="toc-sensitivity-to-estimation-and-missing-data"><span class="toc-section-number">5.4</span> Sensitivity to estimation and
+missing data</a></li>
+</ul></li>
+<li><a href="#conclusion" id="toc-conclusion"><span class="toc-section-number">6</span> Conclusion</a></li>
+<li><a href="#references" id="toc-references"><span class="toc-section-number">7</span> References</a></li>
+<li><a href="#appendix-reproducibility-and-publication-links" id="toc-appendix-reproducibility-and-publication-links"><span class="toc-section-number">8</span> Appendix: Reproducibility and
+Publication Links</a></li>
+</ul>
+</nav>
+<main>
+<header id="title-block-header">
+<h1 class="title">Case 31: Measurement Model Assessment</h1>
+<div class="meta"><div><span>Author</span>Georgia Monjarrez</div><div><span>Date</span>November 25, 2026</div></div>
+</header>
+<h2 data-number="1" id="purpose-and-case-context"><span class="header-section-number">1</span> Purpose and case context</h2>
+<p>This CFA tests whether Case 31 responses support two related factors:
+employee proficiency and operational effectiveness. Members can rate
+staff highly while having concerns about statements or loans.</p>
+<h2 data-number="2" id="constructs-and-indicators"><span class="header-section-number">2</span> Constructs and indicators</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Factor</th>
+<th>Fields in the SPSS file</th>
+<th>Response scale used</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Employee proficiencies</td>
+<td><code>q3</code> courtesy, <code>q4</code> helpfulness,
+<code>q5</code> professionalism, <code>q6</code> availability</td>
+<td>1–5, strongly disagree to strongly agree</td>
+</tr>
+<tr>
+<td>Operational effectiveness</td>
+<td><code>q9_r</code> statement frequency</td>
+<td>1–5, never to too often after reversal</td>
+</tr>
+<tr>
+<td>Operational effectiveness</td>
+<td><code>q10_r</code> statement accuracy</td>
+<td>1–4, poor to excellent after reversal</td>
+</tr>
+<tr>
+<td>Operational effectiveness</td>
+<td><code>q11</code> statement clarity, <code>q12</code> account
+confidentiality</td>
+<td>Original coding is 1 = yes, 2 = no. Analysis coding is 1 = no, 2 =
+yes.</td>
+</tr>
+<tr>
+<td>Operational effectiveness</td>
+<td><code>q31</code> financial information confidentiality,
+<code>q32</code> processing speed, <code>q33</code> whether services
+meet needs, <code>q34</code> application ease</td>
+<td>1–5, strongly disagree to strongly agree</td>
+</tr>
+</tbody>
+</table>
+<p>Q38 groups respondents by headquarters residence (R4a–c). Q7
+describes savings-rate opinions (R1), and Q28, the borrowing screener,
+is absent from the data. Q13r–Q26r measure service awareness (R4b, R5),
+with Q13r predicting Q33 in H1. Q8r and Q30 are the paired loan-rate
+measures (H2), and Q37r rates overall management (R4c, R6). These
+single-item measures remain observed because their measurement error
+cannot be estimated without extra constraints. Q33 also serves as an
+operational indicator.</p>
+<h2 data-number="3" id="data-preparation-and-reverse-coding"><span class="header-section-number">3</span> Data preparation and reverse
+coding</h2>
+<details><summary>R code</summary><div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>({</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(haven)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(lavaan)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>file <span class="ot">&lt;-</span> <span class="fu">Sys.getenv</span>(<span class="st">&quot;CASE31_DATA&quot;</span>, <span class="st">&quot;Case 31 Data_efcu_4.sav&quot;</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>raw <span class="ot">&lt;-</span> <span class="fu">read_sav</span>(file)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>items <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;q3&quot;</span>, <span class="st">&quot;q4&quot;</span>, <span class="st">&quot;q5&quot;</span>, <span class="st">&quot;q6&quot;</span>, <span class="st">&quot;q9_r&quot;</span>, <span class="st">&quot;q10_r&quot;</span>, <span class="st">&quot;q11&quot;</span>, <span class="st">&quot;q12&quot;</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>           <span class="st">&quot;q31&quot;</span>, <span class="st">&quot;q32&quot;</span>, <span class="st">&quot;q33&quot;</span>, <span class="st">&quot;q34&quot;</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all</span>(<span class="fu">c</span>(items, <span class="st">&quot;q9&quot;</span>, <span class="st">&quot;q10&quot;</span>) <span class="sc">%in%</span> <span class="fu">names</span>(raw)))</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">data.frame</span>(<span class="at">Rows =</span> <span class="fu">nrow</span>(raw), <span class="at">Columns =</span> <span class="fu">ncol</span>(raw)))</span></code></pre></div></details>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Rows</th>
+<th style="text-align: right;">Columns</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">128</td>
+<td style="text-align: right;">53</td>
+</tr>
+</tbody>
+</table>
+<details><summary>R code</summary><div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">data.frame</span>(<span class="at">Field =</span> items,</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">Imported_type =</span> <span class="fu">vapply</span>(raw[items], typeof, <span class="st">&quot;&quot;</span>)))</span></code></pre></div></details>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"></th>
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Imported_type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">q3</td>
+<td style="text-align: left;">q3</td>
+<td style="text-align: left;">double</td>
+</tr>
+<tr>
+<td style="text-align: left;">q4</td>
+<td style="text-align: left;">q4</td>
+<td style="text-align: left;">double</td>
+</tr>
+<tr>
+<td style="text-align: left;">q5</td>
+<td style="text-align: left;">q5</td>
+<td style="text-align: left;">double</td>
+</tr>
+<tr>
+<td style="text-align: left;">q6</td>
+<td style="text-align: left;">q6</td>
+<td style="text-align: left;">double</td>
+</tr>
+<tr>
+<td style="text-align: left;">q9_r</td>
+<td style="text-align: left;">q9_r</td>
+<td style="text-align: left;">double</td>
+</tr>
+<tr>
+<td style="text-align: left;">q10_r</td>
+<td style="text-align: left;">q10_r</td>
+<td style="text-align: left;">double</td>
+</tr>
+<tr>
+<td style="text-align: left;">q11</td>
+<td style="text-align: left;">q11</td>
+<td style="text-align: left;">double</td>
+</tr>
+<tr>
+<td style="text-align: left;">q12</td>
+<td style="text-align: left;">q12</td>
+<td style="text-align: left;">double</td>
+</tr>
+<tr>
+<td style="text-align: left;">q31</td>
+<td style="text-align: left;">q31</td>
+<td style="text-align: left;">double</td>
+</tr>
+<tr>
+<td style="text-align: left;">q32</td>
+<td style="text-align: left;">q32</td>
+<td style="text-align: left;">double</td>
+</tr>
+<tr>
+<td style="text-align: left;">q33</td>
+<td style="text-align: left;">q33</td>
+<td style="text-align: left;">double</td>
+</tr>
+<tr>
+<td style="text-align: left;">q34</td>
+<td style="text-align: left;">q34</td>
+<td style="text-align: left;">double</td>
+</tr>
+</tbody>
+</table>
+<details><summary>R code</summary><div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">lapply</span>(raw[items], as.numeric))</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all</span>(x<span class="sc">$</span>q9_r <span class="sc">==</span> <span class="dv">6</span> <span class="sc">-</span> <span class="fu">as.numeric</span>(raw<span class="sc">$</span>q9)),</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>          <span class="fu">all</span>(x<span class="sc">$</span>q10_r <span class="sc">==</span> <span class="dv">5</span> <span class="sc">-</span> <span class="fu">as.numeric</span>(raw<span class="sc">$</span>q10)))</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">as.data.frame.matrix</span>(<span class="fu">table</span>(<span class="at">Original_Q9 =</span> raw<span class="sc">$</span>q9,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">Reversed_Q9 =</span> x<span class="sc">$</span>q9_r)))</span></code></pre></div></details>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"></th>
+<th style="text-align: right;">2</th>
+<th style="text-align: right;">3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">99</td>
+</tr>
+<tr>
+<td style="text-align: left;">4</td>
+<td style="text-align: right;">29</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<details><summary>R code</summary><div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>original_q12 <span class="ot">&lt;-</span> x<span class="sc">$</span>q12</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>x<span class="sc">$</span>q11 <span class="ot">&lt;-</span> <span class="dv">3</span> <span class="sc">-</span> x<span class="sc">$</span>q11</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>x<span class="sc">$</span>q12 <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(x<span class="sc">$</span>q12 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="dv">3</span> <span class="sc">-</span> x<span class="sc">$</span>q12, <span class="cn">NA_real_</span>)</span></code></pre></div></details>
+<p>Q9 was originally coded 1 (too often), 2 (very often), 3 (about
+right), 4 (not often enough), and 5 (never). The stored
+<code>q9_r</code> equals <code>6 - q9</code> for all records. The table
+confirms that 99 responses stayed at 3 and 29 moved from 4 to 2. Higher
+values indicate more frequent statements. The stored Q10 reversal also
+matches the documented coding.</p>
+<p>I treated the 22 undocumented Q12 responses coded 3 as missing. The
+12 raw indicators had 0 system-missing values. All residence groups were
+included.</p>
+<details><summary>R code</summary><div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>desc <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">vapply</span>(x, <span class="cf">function</span>(v) {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="at">N =</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(v)), <span class="at">Missing =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(v)), <span class="at">Mean =</span> <span class="fu">mean</span>(v, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">SD =</span> <span class="fu">sd</span>(v, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="fu">setNames</span>(<span class="fu">as.numeric</span>(<span class="fu">table</span>(<span class="fu">factor</span>(v, <span class="at">levels =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>))),</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                                      <span class="fu">paste</span>(<span class="st">&quot;Count&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)))</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>}, <span class="fu">numeric</span>(<span class="dv">9</span>)))</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(desc, <span class="at">digits =</span> <span class="dv">2</span>, <span class="at">caption =</span> <span class="st">&quot;Indicator descriptives and response counts&quot;</span>)</span></code></pre></div></details>
+<table>
+<caption>Indicator descriptives and response counts</caption>
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 5%" />
+<col style="width: 11%" />
+<col style="width: 7%" />
+<col style="width: 7%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"></th>
+<th style="text-align: right;">N</th>
+<th style="text-align: right;">Missing</th>
+<th style="text-align: right;">Mean</th>
+<th style="text-align: right;">SD</th>
+<th style="text-align: right;">Count 1</th>
+<th style="text-align: right;">Count 2</th>
+<th style="text-align: right;">Count 3</th>
+<th style="text-align: right;">Count 4</th>
+<th style="text-align: right;">Count 5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">q3</td>
+<td style="text-align: right;">128</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4.35</td>
+<td style="text-align: right;">0.66</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">58</td>
+</tr>
+<tr>
+<td style="text-align: left;">q4</td>
+<td style="text-align: right;">128</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4.31</td>
+<td style="text-align: right;">0.70</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">56</td>
+</tr>
+<tr>
+<td style="text-align: left;">q5</td>
+<td style="text-align: right;">128</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4.08</td>
+<td style="text-align: right;">0.66</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">72</td>
+<td style="text-align: right;">33</td>
+</tr>
+<tr>
+<td style="text-align: left;">q6</td>
+<td style="text-align: right;">128</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4.08</td>
+<td style="text-align: right;">0.79</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">41</td>
+</tr>
+<tr>
+<td style="text-align: left;">q9_r</td>
+<td style="text-align: right;">128</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2.77</td>
+<td style="text-align: right;">0.42</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">29</td>
+<td style="text-align: right;">99</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr>
+<td style="text-align: left;">q10_r</td>
+<td style="text-align: right;">128</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3.47</td>
+<td style="text-align: right;">0.64</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">54</td>
+<td style="text-align: right;">68</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr>
+<td style="text-align: left;">q11</td>
+<td style="text-align: right;">128</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.98</td>
+<td style="text-align: right;">0.15</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">125</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr>
+<td style="text-align: left;">q12</td>
+<td style="text-align: right;">106</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">1.70</td>
+<td style="text-align: right;">0.46</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">74</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr>
+<td style="text-align: left;">q31</td>
+<td style="text-align: right;">128</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3.95</td>
+<td style="text-align: right;">0.68</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">77</td>
+<td style="text-align: right;">23</td>
+</tr>
+<tr>
+<td style="text-align: left;">q32</td>
+<td style="text-align: right;">128</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3.72</td>
+<td style="text-align: right;">0.79</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">45</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">21</td>
+</tr>
+<tr>
+<td style="text-align: left;">q33</td>
+<td style="text-align: right;">128</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3.59</td>
+<td style="text-align: right;">0.68</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">45</td>
+<td style="text-align: right;">69</td>
+<td style="text-align: right;">7</td>
+</tr>
+<tr>
+<td style="text-align: left;">q34</td>
+<td style="text-align: right;">128</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3.46</td>
+<td style="text-align: right;">0.78</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">38</td>
+<td style="text-align: right;">71</td>
+<td style="text-align: right;">3</td>
+</tr>
+</tbody>
+</table>
+<h2 data-number="4" id="hypothesized-model-and-estimation"><span class="header-section-number">4</span> Hypothesized model and
+estimation</h2>
+<p>Each item loads on one factor, with cross-loadings and residual
+correlations fixed at zero. Fixing each factor variance at 1 sets its
+scale. The model has 53 degrees of freedom (66 indicator correlations
+minus 12 loadings and one factor correlation).</p>
+<p>WLSMV treats responses as ordered categories. The analysis uses the
+same 106 complete cases throughout, excluding 22 members (17.2%) with
+missing Q12 responses.</p>
+<details><summary>R code</summary><div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="st">&#39;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="st">  Employee_Proficiencies =~ q3 + q4 + q5 + q6</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="st">  Operational_Effectiveness =~ q9_r + q10_r + q11 + q12 +</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="st">                               q31 + q32 + q33 + q34</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="st">&#39;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>complete <span class="ot">&lt;-</span> x[<span class="fu">complete.cases</span>(x), ]</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">cfa</span>(model, <span class="at">data =</span> complete, <span class="at">ordered =</span> items, <span class="at">estimator =</span> <span class="st">&quot;WLSMV&quot;</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>           <span class="at">std.lv =</span> <span class="cn">TRUE</span>, <span class="at">missing =</span> <span class="st">&quot;listwise&quot;</span>)</span></code></pre></div></details>
+<pre><code>#&gt; Warning: lavaan-&gt;lav_samp_step2():  
+#&gt;    correlation between variables q11 and q6 is (nearly) 1.0</code></pre>
+<pre><code>#&gt; Warning: lavaan-&gt;lav_model_vcov():  
+#&gt;    The variance-covariance matrix of the estimated parameters (vcov) does not 
+#&gt;    appear to be positive definite! The smallest eigenvalue (= -3.081266e-17) 
+#&gt;    is smaller than zero. This may be a symptom that the model is not 
+#&gt;    identified.</code></pre>
+<details><summary>R code</summary><div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">lavInspect</span>(fit, <span class="st">&quot;converged&quot;</span>))</span></code></pre></div></details>
+<h2 data-number="5" id="cfa-results"><span class="header-section-number">5</span> CFA results</h2>
+<h3 data-number="5.1" id="model-fit"><span class="header-section-number">5.1</span> Model fit</h3>
+<details><summary>R code</summary><div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fit_table <span class="ot">&lt;-</span> <span class="cf">function</span>(object) {</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  measures <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;chisq.scaled&quot;</span>, <span class="st">&quot;df.scaled&quot;</span>, <span class="st">&quot;pvalue.scaled&quot;</span>, <span class="st">&quot;cfi.scaled&quot;</span>,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;tli.scaled&quot;</span>, <span class="st">&quot;rmsea.scaled&quot;</span>, <span class="st">&quot;rmsea.ci.lower.scaled&quot;</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;rmsea.ci.upper.scaled&quot;</span>, <span class="st">&quot;srmr&quot;</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  values <span class="ot">&lt;-</span> <span class="fu">unname</span>(<span class="fu">fitMeasures</span>(object, measures))</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  rows <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Scaled chi-square&quot;</span>, <span class="st">&quot;df&quot;</span>, <span class="st">&quot;p&quot;</span>, <span class="st">&quot;Scaled CFI&quot;</span>, <span class="st">&quot;Scaled TLI&quot;</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;Scaled RMSEA&quot;</span>, <span class="st">&quot;90% CI lower&quot;</span>, <span class="st">&quot;90% CI upper&quot;</span>, <span class="st">&quot;SRMR&quot;</span>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  printed <span class="ot">&lt;-</span> <span class="fu">formatC</span>(values, <span class="at">format =</span> <span class="st">&quot;f&quot;</span>, <span class="at">digits =</span> <span class="dv">3</span>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  printed[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="fu">as.character</span>(<span class="fu">as.integer</span>(values[<span class="dv">2</span>]))</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  printed[<span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="fu">format.pval</span>(values[<span class="dv">3</span>], <span class="at">digits =</span> <span class="dv">3</span>, <span class="at">eps =</span> .<span class="dv">001</span>)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">Measure =</span> rows, <span class="at">Estimate =</span> printed)</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">fit_table</span>(fit))</span></code></pre></div></details>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Measure</th>
+<th style="text-align: left;">Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Scaled chi-square</td>
+<td style="text-align: left;">242.381</td>
+</tr>
+<tr>
+<td style="text-align: left;">df</td>
+<td style="text-align: left;">53</td>
+</tr>
+<tr>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">&lt;0.001</td>
+</tr>
+<tr>
+<td style="text-align: left;">Scaled CFI</td>
+<td style="text-align: left;">0.806</td>
+</tr>
+<tr>
+<td style="text-align: left;">Scaled TLI</td>
+<td style="text-align: left;">0.758</td>
+</tr>
+<tr>
+<td style="text-align: left;">Scaled RMSEA</td>
+<td style="text-align: left;">0.184</td>
+</tr>
+<tr>
+<td style="text-align: left;">90% CI lower</td>
+<td style="text-align: left;">0.161</td>
+</tr>
+<tr>
+<td style="text-align: left;">90% CI upper</td>
+<td style="text-align: left;">0.208</td>
+</tr>
+<tr>
+<td style="text-align: left;">SRMR</td>
+<td style="text-align: left;">0.184</td>
+</tr>
+</tbody>
+</table>
+<p>Fit was poor. The scaled chi-square rejected exact fit, CFI and TLI
+fell below .90, and RMSEA and SRMR exceeded .18. Lavaan flagged a
+near-perfect ordinal correlation between Q11 and Q6 and a nearly
+singular parameter covariance matrix. Only three members answered “no”
+to Q11, so its estimate is unstable.</p>
+<h3 data-number="5.2" id="loadings-and-convergent-validity"><span class="header-section-number">5.2</span> Loadings and convergent
+validity</h3>
+<details><summary>R code</summary><div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>standardized <span class="ot">&lt;-</span> <span class="fu">standardizedSolution</span>(fit)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>loadings <span class="ot">&lt;-</span> <span class="fu">subset</span>(standardized, op <span class="sc">==</span> <span class="st">&quot;=~&quot;</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>display <span class="ot">&lt;-</span> loadings[<span class="fu">c</span>(<span class="st">&quot;lhs&quot;</span>, <span class="st">&quot;rhs&quot;</span>, <span class="st">&quot;est.std&quot;</span>, <span class="st">&quot;se&quot;</span>, <span class="st">&quot;pvalue&quot;</span>)]</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>display<span class="sc">$</span>lhs <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">&quot;_&quot;</span>, <span class="st">&quot; &quot;</span>, display<span class="sc">$</span>lhs)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>display<span class="sc">$</span>pvalue <span class="ot">&lt;-</span> <span class="fu">format.pval</span>(display<span class="sc">$</span>pvalue, <span class="at">digits =</span> <span class="dv">3</span>, <span class="at">eps =</span> .<span class="dv">001</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(display) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Factor&quot;</span>, <span class="st">&quot;Item&quot;</span>, <span class="st">&quot;Std. loading&quot;</span>, <span class="st">&quot;SE&quot;</span>, <span class="st">&quot;p&quot;</span>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(display, <span class="at">digits =</span> <span class="dv">3</span>)</span></code></pre></div></details>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Factor</th>
+<th style="text-align: left;">Item</th>
+<th style="text-align: right;">Std. loading</th>
+<th style="text-align: right;">SE</th>
+<th style="text-align: left;">p</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Employee Proficiencies</td>
+<td style="text-align: left;">q3</td>
+<td style="text-align: right;">0.707</td>
+<td style="text-align: right;">0.054</td>
+<td style="text-align: left;">&lt;0.001</td>
+</tr>
+<tr>
+<td style="text-align: left;">Employee Proficiencies</td>
+<td style="text-align: left;">q4</td>
+<td style="text-align: right;">0.936</td>
+<td style="text-align: right;">0.027</td>
+<td style="text-align: left;">&lt;0.001</td>
+</tr>
+<tr>
+<td style="text-align: left;">Employee Proficiencies</td>
+<td style="text-align: left;">q5</td>
+<td style="text-align: right;">0.917</td>
+<td style="text-align: right;">0.028</td>
+<td style="text-align: left;">&lt;0.001</td>
+</tr>
+<tr>
+<td style="text-align: left;">Employee Proficiencies</td>
+<td style="text-align: left;">q6</td>
+<td style="text-align: right;">0.848</td>
+<td style="text-align: right;">0.045</td>
+<td style="text-align: left;">&lt;0.001</td>
+</tr>
+<tr>
+<td style="text-align: left;">Operational Effectiveness</td>
+<td style="text-align: left;">q9_r</td>
+<td style="text-align: right;">0.443</td>
+<td style="text-align: right;">0.115</td>
+<td style="text-align: left;">&lt;0.001</td>
+</tr>
+<tr>
+<td style="text-align: left;">Operational Effectiveness</td>
+<td style="text-align: left;">q10_r</td>
+<td style="text-align: right;">0.645</td>
+<td style="text-align: right;">0.099</td>
+<td style="text-align: left;">&lt;0.001</td>
+</tr>
+<tr>
+<td style="text-align: left;">Operational Effectiveness</td>
+<td style="text-align: left;">q11</td>
+<td style="text-align: right;">0.947</td>
+<td style="text-align: right;">0.396</td>
+<td style="text-align: left;">0.0167</td>
+</tr>
+<tr>
+<td style="text-align: left;">Operational Effectiveness</td>
+<td style="text-align: left;">q12</td>
+<td style="text-align: right;">0.078</td>
+<td style="text-align: right;">0.158</td>
+<td style="text-align: left;">0.6217</td>
+</tr>
+<tr>
+<td style="text-align: left;">Operational Effectiveness</td>
+<td style="text-align: left;">q31</td>
+<td style="text-align: right;">0.037</td>
+<td style="text-align: right;">0.058</td>
+<td style="text-align: left;">0.5184</td>
+</tr>
+<tr>
+<td style="text-align: left;">Operational Effectiveness</td>
+<td style="text-align: left;">q32</td>
+<td style="text-align: right;">0.620</td>
+<td style="text-align: right;">0.131</td>
+<td style="text-align: left;">&lt;0.001</td>
+</tr>
+<tr>
+<td style="text-align: left;">Operational Effectiveness</td>
+<td style="text-align: left;">q33</td>
+<td style="text-align: right;">0.567</td>
+<td style="text-align: right;">0.113</td>
+<td style="text-align: left;">&lt;0.001</td>
+</tr>
+<tr>
+<td style="text-align: left;">Operational Effectiveness</td>
+<td style="text-align: left;">q34</td>
+<td style="text-align: right;">0.253</td>
+<td style="text-align: right;">0.136</td>
+<td style="text-align: left;">0.0624</td>
+</tr>
+</tbody>
+</table>
+<details><summary>R code</summary><div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>reliability <span class="ot">&lt;-</span> <span class="cf">function</span>(object) {</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  s <span class="ot">&lt;-</span> <span class="fu">subset</span>(<span class="fu">standardizedSolution</span>(object), op <span class="sc">==</span> <span class="st">&quot;=~&quot;</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">t</span>(<span class="fu">vapply</span>(<span class="fu">split</span>(s<span class="sc">$</span>est.std, s<span class="sc">$</span>lhs), <span class="cf">function</span>(lambda) {</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    error <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> lambda<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="at">CR =</span> <span class="fu">sum</span>(lambda)<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> (<span class="fu">sum</span>(lambda)<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> <span class="fu">sum</span>(error)),</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">AVE =</span> <span class="fu">sum</span>(lambda<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> (<span class="fu">sum</span>(lambda<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">sum</span>(error)))</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  }, <span class="fu">numeric</span>(<span class="dv">2</span>)))</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>quality <span class="ot">&lt;-</span> <span class="fu">reliability</span>(fit)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(quality, <span class="at">digits =</span> <span class="dv">3</span>,</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">caption =</span> <span class="st">&quot;Composite reliability and average variance extracted&quot;</span>)</span></code></pre></div></details>
+<table>
+<caption>Composite reliability and average variance extracted</caption>
+<thead>
+<tr>
+<th style="text-align: left;"></th>
+<th style="text-align: right;">CR</th>
+<th style="text-align: right;">AVE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Employee_Proficiencies</td>
+<td style="text-align: right;">0.916</td>
+<td style="text-align: right;">0.734</td>
+</tr>
+<tr>
+<td style="text-align: left;">Operational_Effectiveness</td>
+<td style="text-align: right;">0.693</td>
+<td style="text-align: right;">0.286</td>
+</tr>
+</tbody>
+</table>
+<p>Employee loadings ranged from .707 to .936 (all p &lt; .001).
+Helpfulness loaded strongest. CR (.916) and AVE (.734) support internal
+consistency and convergence.</p>
+<p>Operations showed weaker convergence (CR = .693, AVE = .286). Q10,
+Q32, and Q33 loaded above .50. Q9 fell below .50, and Q12, Q31, and Q34
+loaded below .40 with p &gt; .05. Q11 loaded .947, but its SE was .396.
+For ordered items, CR and AVE refer to the underlying response
+scale.</p>
+<h3 data-number="5.3" id="discriminant-validity-and-model-problems"><span class="header-section-number">5.3</span> Discriminant validity and model
+problems</h3>
+<details><summary>R code</summary><div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>association <span class="ot">&lt;-</span> <span class="fu">subset</span>(standardized, op <span class="sc">==</span> <span class="st">&quot;~~&quot;</span> <span class="sc">&amp;</span> lhs <span class="sc">!=</span> rhs)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">data.frame</span>(</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Correlation =</span> association<span class="sc">$</span>est.std, <span class="at">Lower_95 =</span> association<span class="sc">$</span>ci.lower,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Upper_95 =</span> association<span class="sc">$</span>ci.upper, <span class="at">Squared_correlation =</span> association<span class="sc">$</span>est.std<span class="sc">^</span><span class="dv">2</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Employee_sqrt_AVE =</span> <span class="fu">sqrt</span>(quality[<span class="dv">1</span>, <span class="st">&quot;AVE&quot;</span>]),</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">Operations_sqrt_AVE =</span> <span class="fu">sqrt</span>(quality[<span class="dv">2</span>, <span class="st">&quot;AVE&quot;</span>])</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>), <span class="at">digits =</span> <span class="dv">3</span>)</span></code></pre></div></details>
+<table>
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 22%" />
+<col style="width: 20%" />
+<col style="width: 22%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: right;">Correlation</th>
+<th style="text-align: right;">Lower_95</th>
+<th style="text-align: right;">Upper_95</th>
+<th style="text-align: right;">Squared_correlation</th>
+<th style="text-align: right;">Employee_sqrt_AVE</th>
+<th style="text-align: right;">Operations_sqrt_AVE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">0.63</td>
+<td style="text-align: right;">0.316</td>
+<td style="text-align: right;">0.944</td>
+<td style="text-align: right;">0.397</td>
+<td style="text-align: right;">0.857</td>
+<td style="text-align: right;">0.535</td>
+</tr>
+</tbody>
+</table>
+<details><summary>R code</summary><div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>mi <span class="ot">&lt;-</span> <span class="fu">modindices</span>(fit, <span class="at">sort. =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(mi[<span class="fu">c</span>(<span class="st">&quot;lhs&quot;</span>, <span class="st">&quot;op&quot;</span>, <span class="st">&quot;rhs&quot;</span>, <span class="st">&quot;mi&quot;</span>, <span class="st">&quot;epc&quot;</span>)], <span class="dv">5</span>), <span class="at">digits =</span> <span class="dv">2</span>,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">caption =</span> <span class="st">&quot;Largest modification indices, used for diagnosis&quot;</span>)</span></code></pre></div></details>
+<table>
+<caption>Largest modification indices, used for diagnosis</caption>
+<thead>
+<tr>
+<th style="text-align: left;"></th>
+<th style="text-align: left;">lhs</th>
+<th style="text-align: left;">op</th>
+<th style="text-align: left;">rhs</th>
+<th style="text-align: right;">mi</th>
+<th style="text-align: right;">epc</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">86</td>
+<td style="text-align: left;">Employee_Proficiencies</td>
+<td style="text-align: left;">=~</td>
+<td style="text-align: left;">q31</td>
+<td style="text-align: right;">179.00</td>
+<td style="text-align: right;">0.88</td>
+</tr>
+<tr>
+<td style="text-align: left;">146</td>
+<td style="text-align: left;">q11</td>
+<td style="text-align: left;"><sub></sub></td>
+<td style="text-align: left;">q31</td>
+<td style="text-align: right;">167.76</td>
+<td style="text-align: right;">-0.65</td>
+</tr>
+<tr>
+<td style="text-align: left;">111</td>
+<td style="text-align: left;">q4</td>
+<td style="text-align: left;"><sub></sub></td>
+<td style="text-align: left;">q31</td>
+<td style="text-align: right;">79.05</td>
+<td style="text-align: right;">0.52</td>
+</tr>
+<tr>
+<td style="text-align: left;">101</td>
+<td style="text-align: left;">q3</td>
+<td style="text-align: left;"><sub></sub></td>
+<td style="text-align: left;">q31</td>
+<td style="text-align: right;">37.68</td>
+<td style="text-align: right;">0.43</td>
+</tr>
+<tr>
+<td style="text-align: left;">120</td>
+<td style="text-align: left;">q5</td>
+<td style="text-align: left;"><sub></sub></td>
+<td style="text-align: left;">q31</td>
+<td style="text-align: right;">31.68</td>
+<td style="text-align: right;">0.38</td>
+</tr>
+</tbody>
+</table>
+<p>The factor correlation was .630 (95% CI [.316, .944]). It was below
+the square root of employee AVE (.857) but above the square root of
+operations AVE (.535), leaving mixed evidence of discriminant validity.
+The largest modification index pointed to Q31, which asks about
+personnel and may overlap with employee proficiency. The original model
+was retained.</p>
+<h3 data-number="5.4" id="sensitivity-to-estimation-and-missing-data"><span class="header-section-number">5.4</span> Sensitivity to estimation and
+missing data</h3>
+<details><summary>R code</summary><div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>sensitivity <span class="ot">&lt;-</span> <span class="fu">cfa</span>(model, <span class="at">data =</span> x, <span class="at">estimator =</span> <span class="st">&quot;MLR&quot;</span>, <span class="at">std.lv =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">missing =</span> <span class="st">&quot;fiml&quot;</span>)</span></code></pre></div></details>
+<pre><code>#&gt; Warning: lavaan-&gt;lav_model_vcov():  
+#&gt;    The variance-covariance matrix of the estimated parameters (vcov) does not 
+#&gt;    appear to be positive definite! The smallest eigenvalue (= 8.607714e-19) 
+#&gt;    is close to zero. This may be a symptom that the model is not identified.</code></pre>
+<details><summary>R code</summary><div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">fit_table</span>(sensitivity))</span></code></pre></div></details>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Measure</th>
+<th style="text-align: left;">Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Scaled chi-square</td>
+<td style="text-align: left;">129.328</td>
+</tr>
+<tr>
+<td style="text-align: left;">df</td>
+<td style="text-align: left;">53</td>
+</tr>
+<tr>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">&lt;0.001</td>
+</tr>
+<tr>
+<td style="text-align: left;">Scaled CFI</td>
+<td style="text-align: left;">0.779</td>
+</tr>
+<tr>
+<td style="text-align: left;">Scaled TLI</td>
+<td style="text-align: left;">0.725</td>
+</tr>
+<tr>
+<td style="text-align: left;">Scaled RMSEA</td>
+<td style="text-align: left;">0.106</td>
+</tr>
+<tr>
+<td style="text-align: left;">90% CI lower</td>
+<td style="text-align: left;">0.083</td>
+</tr>
+<tr>
+<td style="text-align: left;">90% CI upper</td>
+<td style="text-align: left;">0.130</td>
+</tr>
+<tr>
+<td style="text-align: left;">SRMR</td>
+<td style="text-align: left;">0.086</td>
+</tr>
+</tbody>
+</table>
+<details><summary>R code</summary><div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">reliability</span>(sensitivity), <span class="at">digits =</span> <span class="dv">3</span>)</span></code></pre></div></details>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"></th>
+<th style="text-align: right;">CR</th>
+<th style="text-align: right;">AVE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Employee_Proficiencies</td>
+<td style="text-align: right;">0.873</td>
+<td style="text-align: right;">0.635</td>
+</tr>
+<tr>
+<td style="text-align: left;">Operational_Effectiveness</td>
+<td style="text-align: right;">0.485</td>
+<td style="text-align: right;">0.139</td>
+</tr>
+</tbody>
+</table>
+<p>The MLR sensitivity check treats scores as numeric and uses FIML for
+all 128 cases under a missing-at-random assumption. Fit was still poor
+(CFI = .779, RMSEA = .106), operational AVE fell to .139, and Q11’s
+loading fell to .286. Lavaan again flagged a nearly singular parameter
+covariance matrix.</p>
+<h2 data-number="6" id="conclusion"><span class="header-section-number">6</span> Conclusion</h2>
+<p>I would hold off on structural testing. Employee proficiencies had
+strong loadings, while the operations items showed low shared variance
+and Q11 was sensitive to the estimator. Before testing structural paths,
+I would verify Q12’s coding and review whether statements,
+confidentiality, and loan processes belong in one factor.</p>
+<h2 data-number="7" id="references"><span class="header-section-number">7</span> References</h2>
+<ul>
+<li><em>Case 31: Employees Federal Credit Union</em>. Course
+questionnaire, SPSS data file, construct and measurement key, and
+data-analysis table.</li>
+<li>Rosseel, Y. (2012). lavaan: An R package for structural equation
+modeling. <em>Journal of Statistical Software, 48</em>(2), 1–36. <a href="https://doi.org/10.18637/jss.v048.i02">https://doi.org/10.18637/jss.v048.i02</a></li>
+<li>Fornell, C., &amp; Larcker, D. F. (1981). Evaluating structural
+equation models with unobservable variables and measurement error.
+<em>Journal of Marketing Research, 18</em>(1), 39–50. <a href="https://doi.org/10.1177/002224378101800104">https://doi.org/10.1177/002224378101800104</a></li>
+</ul>
+<h2 data-number="8" id="appendix-reproducibility-and-publication-links"><span class="header-section-number">8</span> Appendix: Reproducibility and
+Publication Links</h2>
+<ul>
+<li><a href="https://github.com/gmonjarrez/ibm-6500-sql-learning-portfolio">GitHub
+repository</a></li>
+<li><a href="https://gmonjarrez.github.io/ibm-6500-sql-learning-portfolio/M13-Case31-Measurement-Model.html">GitHub
+Pages report (pending publication)</a></li>
+</ul>
+</main>
+</body>
+</html>
