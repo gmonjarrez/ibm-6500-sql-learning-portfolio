@@ -1,0 +1,329 @@
+---
+title: "Milestone 5 | Analytics Mart v1"
+subtitle: "Restaurant at Kellogg Ranch · IBM 6500"
+lang: en
+format:
+  html:
+    toc: true
+    toc-title: Contents
+    theme: none
+    syntax-highlighting: none
+---
+
+```{=html}
+<style>
+body { max-width: 66rem; margin: 0 auto; padding: 2rem 1.3rem; color: #1c2d2b; font: 16px/1.55 system-ui, sans-serif; }
+header { border-bottom: 3px solid #216357; padding-bottom: .8rem; }
+h1, h2, h3, a { color: #17564d; }
+h2 { margin-top: 2.2rem; }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; vertical-align: top; padding: .5rem .65rem; border-bottom: 1px solid #d2dfdc; }
+th, pre { background: #eff5f3; }
+pre { padding: 1rem; overflow-x: auto; }
+code { font-size: .87em; }
+@media print { body { padding: 0; } tr { break-inside: avoid; } }
+</style>
+```
+
+## 1. Mart design brief
+
+The Milestone 1 [Analytics Blueprint](https://lahumada63.github.io/GA4-1---GP-Analytics-Blueprint/) asks how RKR visitors find the restaurant, use the menu, and act on reservation prompts. This mart supports Q1 (Collins Concierge), Q4 (website engagement), and Q5 (Instagram). It can also show traffic and reservation intent from tagged Facebook links for Q3.
+
+| Business question | Looker Studio metric |
+|---|---|
+| How often do visitors view or explore the menu? | Menu page views = sum of `menu_page_views`. Menu exploration rate = sum of `menu_explored` ÷ session rows. |
+| How often do website sessions reach a reservation CTA? | CTA clicks = sum of `reservation_clicks`. Website click rate = sum of `clicked_reservation` ÷ session rows. |
+| How do the Collins Concierge placements compare? | Filter to source beginning with `collins_concierge_` and medium `email`. Compare session counts and reservation click events ÷ sessions by source and campaign. Repeat clicks count, so this ratio can exceed 100%. |
+| How many Instagram sessions show reservation intent? | Filter to source `instagram` and medium `organic_social`. Report session count and sum of `clicked_reservation` ÷ session rows. |
+
+Format the rates as percentages and return null if the denominator is zero. Use a count of `session_key` for sessions. Connect Looker Studio directly to `rkr_session_mart_v1` and use `report_date` for the date control. Filter or group by acquisition, RKR landing page, device, or country.
+
+**Grain.** One row per identifiable GA4 session with at least one event reported from an RKR web page in the selected export window. The key combines the pseudonymous browser/device ID and `ga_session_id`. Session grain gives each eligible session one denominator row and allows repeated CTA clicks to be counted separately from the number of sessions that clicked.
+
+**Scope.** The source is the client’s daily GA4 BigQuery export. The mart includes events on `cpp.edu/rkr/` and its subpaths. Approved menu PDF downloads are measured from the menu page. Landing page means the first observed RKR page view, including when someone enters RKR from another CPP page. The date is the first RKR event date observed in the snapshot. Sessions crossing a snapshot boundary can be partial, so use a consistent build window and group by the stored date. OpenTable bookings, platform engagement, Qualtrics results, and menu or CTA placement drilldowns are outside v1. A `reserve_click` measures intent. Confirmed bookings require separate OpenTable data.
+
+## 2. BigQuery table
+
+**Output** `YOUR_PROJECT.YOUR_MART_DATASET.rkr_session_mart_v1`. The dictionary below lists all output fields and types.
+
+Run in GoogleSQL as one script so the validation queries can access the temporary event stage. Replace the source and destination identifiers with the team's actual projects and datasets. Use datasets in the same BigQuery location. Choose the first and last finalized daily exports in the reporting window. The dates below are an example. Verify the PDF list against the reporting period and confirm the reservation tag fires only for approved RKR controls. Run the build once, then rebuild the same snapshot when the source is updated.
+
+```sql
+DECLARE start_suffix STRING DEFAULT '20261101';
+DECLARE end_suffix STRING DEFAULT '20261118';
+
+-- Strip query strings and fragments before matching destinations.
+CREATE TEMP FUNCTION url_key(url STRING) AS (
+  REGEXP_REPLACE(TRIM(url), r'[?#].*$', '')
+);
+
+CREATE TEMP FUNCTION cpp_host(url STRING) AS (
+  LOWER(NET.HOST(url)) IN ('www.cpp.edu', 'cpp.edu')
+);
+
+CREATE TEMP FUNCTION url_path(url STRING) AS (
+  REGEXP_EXTRACT(url, r'(?i)^https?://[^/]+(/.*)$')
+);
+
+CREATE TEMP TABLE rkr_events AS
+WITH extracted AS (
+  SELECT
+    PARSE_DATE('%Y%m%d', event_date) AS event_date,
+    event_timestamp,
+    event_name,
+    NULLIF(TRIM(user_pseudo_id), '') AS user_pseudo_id,
+    NULLIF(TRIM(device.category), '') AS device_category,
+    NULLIF(TRIM(geo.country), '') AS country,
+    -- Keep the export's session attribution together as a record.
+    session_traffic_source_last_click.cross_channel_campaign AS cross_channel,
+    session_traffic_source_last_click.manual_campaign AS manual,
+    (
+      SELECT AS STRUCT
+        MAX(IF(key = 'ga_session_id', value.int_value, NULL)) AS session_id,
+        MAX(IF(key = 'page_location', value.string_value, NULL)) AS page_url,
+        MAX(IF(key = 'link_url', value.string_value, NULL)) AS link_url,
+        MAX(IF(key = 'booking_provider', value.string_value, NULL)) AS provider,
+        MAX(IF(key = 'cta_location', value.string_value, NULL)) AS cta_location,
+        MAX(IF(key = 'interaction_type', value.string_value, NULL)) AS interaction_type
+      FROM UNNEST(event_params)
+    ) AS params
+  FROM `YOUR_SOURCE_PROJECT.YOUR_GA4_DATASET.events_*`
+  WHERE _TABLE_SUFFIX BETWEEN start_suffix AND end_suffix
+    AND REGEXP_CONTAINS(_TABLE_SUFFIX, r'^\d{8}$')
+), normalized AS (
+  SELECT
+    *,
+    url_path(url_key(params.page_url)) AS page_path,
+    url_path(url_key(params.link_url)) AS link_path,
+    CASE
+      WHEN NULLIF(TRIM(cross_channel.source), '') IS NOT NULL
+       AND NULLIF(TRIM(cross_channel.medium), '') IS NOT NULL
+        THEN STRUCT(
+          LOWER(TRIM(cross_channel.source)) AS source,
+          LOWER(TRIM(cross_channel.medium)) AS medium,
+          NULLIF(TRIM(cross_channel.campaign_name), '') AS campaign,
+          NULLIF(TRIM(cross_channel.default_channel_group), '') AS channel,
+          1 AS priority
+        )
+      WHEN NULLIF(TRIM(manual.source), '') IS NOT NULL
+       AND NULLIF(TRIM(manual.medium), '') IS NOT NULL
+        THEN STRUCT(
+          LOWER(TRIM(manual.source)) AS source,
+          LOWER(TRIM(manual.medium)) AS medium,
+          NULLIF(TRIM(manual.campaign_name), '') AS campaign,
+          CAST(NULL AS STRING) AS channel,
+          2 AS priority
+        )
+    END AS acquisition
+  FROM extracted
+)
+SELECT
+  event_date,
+  event_timestamp,
+  event_name,
+  page_path,
+  device_category,
+  country,
+  acquisition,
+  IF(
+    user_pseudo_id IS NOT NULL AND params.session_id > 0,
+    TO_HEX(SHA256(TO_JSON_STRING(STRUCT(user_pseudo_id, params.session_id)))),
+    NULL
+  ) AS session_key,
+  event_name = 'page_view' AND page_path = '/rkr/menu.shtml' AS is_menu_view,
+  event_name = 'menu_section_open' AND page_path = '/rkr/menu.shtml'
+    AS is_menu_section_open,
+  event_name = 'file_download' AND page_path = '/rkr/menu.shtml'
+    AND cpp_host(params.link_url)
+    AND link_path IN (
+      '/rkr/menu-pdfs/lunch-service-menu_fall-2026_lunch-8.5x14_final_printed.pdf',
+      '/rkr/menu-pdfs/dinner-service-menu_fall-2026_8.5x14_final_printed.pdf',
+      '/rkr/menu-pdfs/1_service-menu_summer-2026_beverage-8.5x14_final.pdf',
+      '/rkr/menu-pdfs/3_-service-menu_summer-2026_wine-by-bottle_8.5x14_final.pdf'
+    ) AS is_menu_download,
+  event_name = 'reserve_click'
+    AND LOWER(TRIM(params.provider)) = 'opentable'
+    AND NULLIF(TRIM(params.cta_location), '') IS NOT NULL
+    AND NULLIF(TRIM(params.interaction_type), '') IS NOT NULL AS is_reserve_click
+FROM normalized
+WHERE cpp_host(params.page_url)
+  AND (page_path = '/rkr' OR STARTS_WITH(page_path, '/rkr/'));
+
+-- Avoid replacing a populated mart with an empty snapshot.
+ASSERT (SELECT COUNTIF(session_key IS NOT NULL) > 0 FROM rkr_events)
+  AS 'No identifiable RKR events in the selected export window';
+
+-- Collapse eligible events to one row per session. Use the first RKR event
+-- for device and country and prioritize complete cross-channel attribution.
+CREATE OR REPLACE TABLE `YOUR_PROJECT.YOUR_MART_DATASET.rkr_session_mart_v1`
+PARTITION BY report_date
+CLUSTER BY session_source, session_medium, device_category
+AS
+WITH sessions AS (
+  SELECT
+    session_key,
+    MIN(event_date) AS report_date,
+    ARRAY_AGG(IF(event_name = 'page_view', page_path, NULL)
+      IGNORE NULLS ORDER BY event_timestamp, page_path LIMIT 1)[SAFE_OFFSET(0)]
+      AS landing_page,
+    ARRAY_AGG(STRUCT(device_category, country)
+      ORDER BY event_timestamp, device_category, country LIMIT 1)[OFFSET(0)]
+      AS first_dimensions,
+    ARRAY_AGG(acquisition IGNORE NULLS
+      ORDER BY acquisition.priority, event_timestamp, acquisition.source,
+        acquisition.medium, acquisition.campaign, acquisition.channel
+      LIMIT 1)[SAFE_OFFSET(0)] AS session_acquisition,
+    COUNTIF(is_menu_view) AS menu_page_views,
+    COUNTIF(is_menu_section_open OR is_menu_download) AS menu_interactions,
+    COUNTIF(is_reserve_click) AS reservation_clicks
+  FROM rkr_events
+  WHERE session_key IS NOT NULL
+  GROUP BY session_key
+)
+SELECT
+  report_date,
+  session_key,
+  session_acquisition.channel AS session_channel,
+  session_acquisition.source AS session_source,
+  session_acquisition.medium AS session_medium,
+  session_acquisition.campaign AS session_campaign,
+  landing_page,
+  first_dimensions.device_category AS device_category,
+  first_dimensions.country AS country,
+  menu_page_views,
+  IF(menu_interactions > 0, 1, 0) AS menu_explored,
+  reservation_clicks,
+  IF(reservation_clicks > 0, 1, 0) AS clicked_reservation
+FROM sessions;
+```
+
+## 3. Data dictionary
+
+| Field | Type | Definition | Caveat |
+|---|---|---|---|
+| `report_date` | DATE | Date of the earliest in-scope RKR event in the snapshot, in the GA4 property's time zone. | A campus session can begin before its first RKR event. |
+| `session_key` | STRING | SHA-256 hash of the exported pseudonymous ID and GA4 session ID as a structured pair. | Both IDs are required. A hash is still pseudonymous. Keep row-level data in authorized BigQuery access. |
+| `session_channel` | STRING | Exported session default channel group. | May be null, including when attribution uses the manual campaign record. |
+| `session_source` | STRING | Exported session acquisition source, trimmed and lowercased. | Uses the manual session campaign pair if a complete cross-channel pair is unavailable. Can be null. |
+| `session_medium` | STRING | Exported session acquisition medium, trimmed and lowercased. | Taken from the same attribution record as source. Can be null. |
+| `session_campaign` | STRING | Name of the selected session campaign. | Missing or untagged campaign names can be null. |
+| `landing_page` | STRING | Path of the earliest RKR page view, with query string and fragment removed. | Null when the session has an RKR event but no RKR page view. Timestamp ties sort by path. |
+| `device_category` | STRING | Device category on the first observed RKR event. | Null when the export omits it. |
+| `country` | STRING | Exported country on the first observed RKR event. | Geo is approximate. Missing values remain null. |
+| `menu_page_views` | INT64 | Number of `page_view` events on `/rkr/menu.shtml`. | Reopens and reloads can count again. |
+| `menu_explored` | INT64 | 1 if a session contains a menu expansion or approved PDF click, otherwise 0. | Counts each session once even if it contains both. PDF clicks indicate intent to open the file. |
+| `reservation_clicks` | INT64 | Number of RKR `reserve_click` events with OpenTable provider and populated CTA location and interaction type. | Includes repeat activations. The event is assumed to fire only for QA-approved controls. |
+| `clicked_reservation` | INT64 | 1 if the session has any qualifying reservation click, otherwise 0. | Embedded widget clicks require provider support to be observable. |
+
+The daily export represents observed data. Consent, blockers, and incomplete tagging can reduce coverage, and sessions missing either key component are excluded. The mart applies no reporting thresholds or modeled adjustments. GA4 interface totals can differ. Keep validation results with the team's private BigQuery work. [GA4 BigQuery export schema](https://support.google.com/analytics/answer/7029846) · [RKR menu and PDF destinations](https://www.cpp.edu/rkr/menu.shtml).
+
+## 4. Validation queries
+
+Append these queries after the build in the same BigQuery script. Run against a confirmed RKR export before connecting the dashboard. The checks below describe expected outcomes. Live counts require access to the client export.
+
+### 1. Row counts, unique keys, and coverage
+
+Compare in-scope event coverage with mart coverage by date. The two date ranges can differ because the mart dates each session by its first observed RKR event. `duplicate_session_rows` should be zero on every date.
+
+```sql
+WITH raw_dates AS (
+  SELECT event_date AS report_date, COUNT(*) AS raw_rkr_events,
+    COUNTIF(session_key IS NULL) AS raw_events_missing_session_key
+  FROM rkr_events
+  GROUP BY 1
+), mart_dates AS (
+  SELECT report_date, COUNT(*) AS session_rows
+  FROM `YOUR_PROJECT.YOUR_MART_DATASET.rkr_session_mart_v1`
+  GROUP BY 1
+), duplicate_dates AS (
+  SELECT report_date, COUNT(*) AS duplicate_session_rows
+  FROM (
+    SELECT report_date,
+      ROW_NUMBER() OVER (PARTITION BY session_key ORDER BY report_date) AS key_row
+    FROM `YOUR_PROJECT.YOUR_MART_DATASET.rkr_session_mart_v1`
+  )
+  WHERE key_row > 1
+  GROUP BY 1
+)
+SELECT
+  day AS report_date,
+  COALESCE(raw_rkr_events, 0) AS raw_rkr_events,
+  COALESCE(raw_events_missing_session_key, 0) AS raw_events_missing_session_key,
+  COALESCE(session_rows, 0) AS session_rows,
+  COALESCE(duplicate_session_rows, 0) AS duplicate_session_rows
+FROM UNNEST(GENERATE_DATE_ARRAY(
+  PARSE_DATE('%Y%m%d', start_suffix), PARSE_DATE('%Y%m%d', end_suffix)
+)) AS day
+LEFT JOIN raw_dates AS r ON day = r.report_date
+LEFT JOIN mart_dates AS m ON day = m.report_date
+LEFT JOIN duplicate_dates AS d ON day = d.report_date
+ORDER BY day;
+```
+
+### 2. Reconcile KPI totals with raw events
+
+Count directly from the filtered event rows before session aggregation. Each difference should be zero. Zero qualifying interactions should be investigated with a known tagged test session when tracking is expected to be active.
+
+```sql
+WITH raw AS (
+  SELECT
+    COUNT(DISTINCT session_key) AS sessions,
+    COUNTIF(session_key IS NOT NULL AND is_menu_view) AS menu_views,
+    COUNTIF(session_key IS NOT NULL AND is_reserve_click) AS reserve_clicks,
+    COUNT(DISTINCT IF(is_menu_section_open OR is_menu_download,
+      session_key, NULL)) AS sessions_explored,
+    COUNT(DISTINCT IF(is_reserve_click, session_key, NULL))
+      AS sessions_clicked,
+    COUNTIF(event_name = 'reserve_click' AND NOT COALESCE(is_reserve_click, FALSE))
+      AS reserve_events_with_invalid_parameters
+  FROM rkr_events
+), mart AS (
+  SELECT
+    COUNT(*) AS sessions,
+    COALESCE(SUM(menu_page_views), 0) AS menu_views,
+    COALESCE(SUM(reservation_clicks), 0) AS reserve_clicks,
+    COALESCE(SUM(menu_explored), 0) AS sessions_explored,
+    COALESCE(SUM(clicked_reservation), 0) AS sessions_clicked
+  FROM `YOUR_PROJECT.YOUR_MART_DATASET.rkr_session_mart_v1`
+)
+SELECT
+  raw.sessions AS eligible_raw_sessions,
+  raw.reserve_events_with_invalid_parameters,
+  mart.sessions - raw.sessions AS session_difference,
+  mart.menu_views - raw.menu_views AS menu_view_difference,
+  mart.reserve_clicks - raw.reserve_clicks AS reserve_click_difference,
+  mart.sessions_explored - raw.sessions_explored AS explored_session_difference,
+  mart.sessions_clicked - raw.sessions_clicked AS clicked_session_difference
+FROM raw CROSS JOIN mart;
+```
+
+### 3. Dimension missingness
+
+Compare missing counts and proportions across dates. Check whether known newsletter and Instagram tests appear with their planned source and medium.
+
+```sql
+SELECT
+  report_date,
+  COUNT(*) AS session_rows,
+  COUNTIF(session_source IS NULL OR session_medium IS NULL)
+    AS missing_source_or_medium,
+  SAFE_DIVIDE(COUNTIF(session_source IS NULL OR session_medium IS NULL),
+    COUNT(*)) AS missing_acquisition_share,
+  COUNTIF(session_channel IS NULL) AS missing_channel,
+  COUNTIF(session_campaign IS NULL) AS missing_campaign,
+  COUNTIF(landing_page IS NULL) AS missing_landing_page,
+  COUNTIF(device_category IS NULL) AS missing_device,
+  COUNTIF(country IS NULL) AS missing_country,
+  COUNTIF(STARTS_WITH(session_source, 'collins_concierge_')
+    AND session_medium = 'email') AS newsletter_sessions,
+  COUNTIF(session_source = 'instagram' AND session_medium = 'organic_social')
+    AS instagram_sessions
+FROM `YOUR_PROJECT.YOUR_MART_DATASET.rkr_session_mart_v1`
+GROUP BY report_date
+ORDER BY report_date;
+```
+
+## Appendix
+
+- [GitHub repository](https://github.com/gmonjarrez/ibm-6500-sql-learning-portfolio)
+- [GitHub Pages report](https://gmonjarrez.github.io/ibm-6500-sql-learning-portfolio/GA4-5-Analytics-Mart.html)
